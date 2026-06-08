@@ -1,20 +1,44 @@
-# Dependências
+# Node
 node_modules/
-back/node_modules/
-front/node_modules/
+npm-debug.log
+yarn-error.log
+package-lock.json
+yarn.lock
 
-# Builds e arquivos de build do react-scripts
+# Builds e arquivos de build
 build/
-front/build/
+dist/
+out/
+.next/
+.nuxt/
+.output/
 
 # Configurações locais / segredos
 .env
-back/.env
-front/.env
+.env.*
+!.env.example
 *.local
 
 # Logs
 *.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Arquivos de Sistema
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Dependências específicas do projeto
+back/node_modules/
+front/node_modules/
+back/.env
+front/.env
+front/build/
 front/front.log
 front/testlog.txt
 front/buildlog.txt
@@ -23,11 +47,16 @@ front/build-log.txt
 front/build-output.log
 front/build-tree.txt
 backend_start.log
-
-# Arquivos de Sistema
-.DS_Store
-Thumbs.db
-.vscode/
-.idea/
 .gemini/
 .antigravityignore
+front/src/.env
+
+# Dumps de banco de dados (NUNCA versionar - arquivos gigantes e dados sensíveis)
+dump.sql
+dump.sql.gz
+*.sql.gz
+back/promocao.sql
+back/seed_uf.sql
+
+# Scripts locais temporários
+scripts/
