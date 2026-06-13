@@ -1,7 +1,6 @@
 import { BrowserRouter, Routes, Route, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { masterPath, version } from '../config/config';
-import GraficoEmpresasPorEstado from "./components/GraficoEmpresasPorEstado";
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'font-awesome/css/font-awesome.min.css';

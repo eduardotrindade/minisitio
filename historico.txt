@@ -8,3 +8,14 @@
 - Nenhum erro foi encontrado durante o push e o histórico já reflete o novo estado do projeto.
 - Próximo passo: publicação local concluída; backend rodando na porta 3032 e frontend na 3000 (pasta front)
 - Versão local funcional, UFS carregada, institucional visível e erros de rede corrigidos.
+
+## ATUALIZAÇÃO DE 13 de Junho de 2026
+
+- Limpeza geral de arquivos não utilizados no projeto (backend + frontend).
+- 77 arquivos movidos para pasta legado/ (copies, backups, orfãos).
+- 11 arquivos restaurados ao front/src/ (eram importados por componentes ativos).
+- Corrigido import quebrado de GraficoEmpresasPorEstado.jsx em Administrator.jsx.
+- Build do frontend verificado com sucesso (Compiled successfully).
+- Syntax do backend verificada com sucesso (node --check).
+- Arquivos movidos para legado/: serverold.js, sync_db.js, back.log, server copy.js, Busca copy.jsx, Mosaico copy.jsx, Users.jsx, FormCadastro.jsx, Modal.jsx, duplicate files, etc.
+- Arquivos mantidos em front/src/: BntActivate.jsx, MsgConfirm.jsx, HelpTip.jsx, FieldsetPatrocinador.jsx, formConfig.jsx, ChooseFilePdf.jsx, controllerCardlist.js, moverParaTop.js, GlobalShare.jsx, ShareButton.jsx, tableRequests.js, UserNav.jsx, Cardlist.jsx, Duplicate.jsx, DuplicateForm.jsx, Modal.jsx, checkoutUpdate.js, ChooseFile1.jsx.
