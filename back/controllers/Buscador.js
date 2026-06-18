@@ -256,19 +256,20 @@ WHERE
     },
     buscarCaderno: async (req, res) => {
         const uf = req.query.uf;
+        console.log("DEBUG BACKEND: UF recebida na busca de cadernos:", uf);
 
         try {
-                  const cadernos = await Caderno.findAll({
-            where: {
-                UF: uf
-            },
-            order: [
-                ['isCapital', 'ASC'],
-                ['nomeCaderno', 'ASC']
-            ],
-        });
-
-        return res.json(cadernos);
+            const cadernos = await Caderno.findAll({
+                where: {
+                    UF: uf
+                },
+                order: [
+                    ['isCapital', 'ASC'],
+                    ['nomeCaderno', 'ASC']
+                ],
+            });
+            console.log("DEBUG BACKEND: Cidades encontradas:", cadernos.length);
+            return res.json(cadernos);
         } catch (error) {
             console.log(error)
         }
