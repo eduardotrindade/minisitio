@@ -4,7 +4,6 @@ const jwt = require('jsonwebtoken');
 function auth(req, res, next) {
   const secretKey = key.apiSecret;
     const authToken = req.headers['authorization'];
-    console.log(authToken, req.headers)
 
     if (authToken != undefined) {
 
@@ -13,7 +12,6 @@ function auth(req, res, next) {
 
         jwt.verify(token, secretKey, (err, data) => {
             if (err) {
-                console.log(err)
                 res.status(401);
                 res.json({ success: false, message: "Token inválido" });
             } else {

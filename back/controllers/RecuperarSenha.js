@@ -1,4 +1,5 @@
 const crypto = require('crypto');
+const bcrypt = require('bcryptjs');
 const Usuario = require('../models/table_usuarios');
 const Sequelize = require('sequelize');
 const { Op } = Sequelize;
@@ -39,43 +40,30 @@ module.exports = {
 
         const emailRecuperacao = await forgotPasswordEmail(user[0].descEmail, resetLink);
 
-        console.log(req.body, emailRecuperacao, user[0].descEmail)
         res.json({ success: true, messagem: "enviado" });
     },
     resetPassword: async (req, res) => {
         const { token, password } = req.body;
-        console.log(req.body)
 
         if (!token || !password)
             return res.status(400).json({ message: 'Token e nova senha são obrigatórios.' });
 
         try {
-            // Busca o usuário com token válido
             const user = await Usuario.findOne({
                 where: {
                     resetToken: token,
                     resetTokenExpires: {
-                        [Op.gt]: new Date() // Token ainda é válido
+                        [Op.gt]: new Date()
                     }
                 },
                 attributes: ['codUsuario', 'descEmail', 'senha', 'resetToken', 'resetTokenExpires']
             });
 
-            console.log(user)
-
             if (!user) {
                 return res.status(400).json({ message: 'Token inválido ou expirado.' });
             }
 
-            // Criptografa a nova senha
-            //const hashedPassword = await bcrypt.hash(password, 10);
-            const hashedPassword = password;
-
-            // Atualiza e limpa os campos
-            /*            user.senha = hashedPassword;
-                       user.resetToken = null;
-                       user.resetTokenExpires = null;
-                       await user.save(); */
+            const hashedPassword = await bcrypt.hash(password, 10);
 
             await Usuario.update({
                 senha: hashedPassword,
@@ -88,7 +76,7 @@ module.exports = {
             res.status(200).json({ success: true, message: 'Senha atualizada com sucesso.' });
 
         } catch (err) {
-            console.error(err);
+            console.error('Erro ao redefinir senha');
             res.status(500).json({ message: 'Erro ao redefinir senha.' });
         }
     }

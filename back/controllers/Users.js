@@ -11,6 +11,7 @@ const Sequelize = require('sequelize');
 const { Op } = Sequelize;
 const { novoUsuario } = require('../functions/sendMailer');
 const Usuario = require('../models/table_usuarios');
+const bcrypt = require('bcryptjs');
 
 
 module.exports = {
@@ -41,14 +42,16 @@ module.exports = {
             return origem.slice(0, 5);
         }
 
-
+        const senhaGerada = gerarSenha();
+        const salt = await bcrypt.genSalt(10);
+        const senhaHash = await bcrypt.hash(senhaGerada, salt);
 
         const dadosUsuario = {
             "codTipoPessoa": TipoPessoa,
             "descCPFCNPJ": CPFCNPJ,
             "descNome": Nome,
             "descEmail": Email,
-            "senha": gerarSenha(),
+            "senha": senhaHash,
             "hashCode": hashCode,
             "descValue": Value,
             "codTipoUsuario": TipoUsuario,
@@ -132,7 +135,7 @@ module.exports = {
             "descCPFCNPJ": CPFCNPJ,
             "descNome": Nome,
             "descEmail": Email,
-            "senha": senha,
+            "senha": senha ? await bcrypt.hash(senha, 10) : undefined,
             "hashCode": hashCode,
             "descValue": Value,
             "codTipoUsuario": TipoUsuario,
@@ -547,18 +550,16 @@ module.exports = {
             }
 
 
-            const queryUsers = {
-                [require]: { [Op.like]: `${nu_doc}%` },
-            }
+        const queryUsers = {
+            [require]: { [Op.like]: `${nu_doc}%` },
+        }
 
-            if (!uf && !caderno) {
-                queryUsers.codUf = uf
-                queryUsers.codCidade = caderno
-            }
+        if (!uf && !caderno) {
+            queryUsers.codUf = uf
+            queryUsers.codCidade = caderno
+        }
 
-            //Atividades
-            console.time("teste")
-            const resultUser = await Users.findAndCountAll({
+        const resultUser = await Users.findAndCountAll({
                 where: queryUsers
                 /* {
                     [require]: { [Op.like]: `${nu_doc}%` },
@@ -583,10 +584,6 @@ module.exports = {
                 limit: porPagina,
                 offset: offset,
             });
-            console.log(resultUser);
-
-            console.timeEnd("teste")
-            console.log("debug: ", resultUser.length);
             if (resultUser.count < 1) {
                 res.json({ success: false, message: "não encontrado" });
                 return;

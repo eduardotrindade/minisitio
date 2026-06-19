@@ -3,6 +3,7 @@ const Login = require('../models/table_user_login');
 const key = require('../config/config.js');
 const secretKey = key.apiSecret;
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
 
 //model
 const Usuarios = require('../models/table_usuarios');
@@ -13,7 +14,9 @@ module.exports = {
 
         const { descCPFCNPJ, senha } = req.body;
 
-        console.log(descCPFCNPJ, senha)
+        if (!descCPFCNPJ || !senha) {
+            return res.status(400).json({ success: false, message: "CPF/CNPJ e senha são obrigatórios" });
+        }
 
         const user = await Usuarios.findOne({
             where: {
@@ -23,7 +26,12 @@ module.exports = {
             attributes: ['codUsuario', 'descNome', 'descCPFCNPJ', 'senha', 'codTipoUsuario', 'ativo']
         });
 
-        if (!user || senha != user.senha) {
+        if (!user) {
+            return res.status(401).json({ success: false, message: "Credenciais inválidas" });
+        }
+
+        const senhaValida = await bcrypt.compare(senha, user.senha);
+        if (!senhaValida) {
             return res.status(401).json({ success: false, message: "Credenciais inválidas" });
         }
 

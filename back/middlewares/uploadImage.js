@@ -1,15 +1,16 @@
 const multer = require('multer');
 const path = require('path');
 
+const ALLOWED_UPLOAD_DIRS = ['logoParceiro', 'logoCertificado', 'imgCertificado', 'logoCashBack', 'descImagem', 'promocao'];
+
 module.exports = (multer({
     storage: multer.diskStorage({
         destination: (req, file, cb) => {
-            if (req.query.local) {
+            if (req.query.local && ALLOWED_UPLOAD_DIRS.includes(req.query.local)) {
                 cb(null, path.join(__dirname, `../public/upload/img/${req.query.local}`));
             } else {
                 cb(null, path.join(__dirname, '../public/upload/img/'));
             }
-
         },
         filename: (req, file, cb) => {
             //cb(null, Date.now().toString() + "_" + file.originalname) 
@@ -68,5 +69,8 @@ module.exports = (multer({
         }
 
         return cb(null, false);
+    },
+    limits: {
+        fileSize: 5 * 1024 * 1024 // 5MB max
     }
 }));

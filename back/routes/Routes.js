@@ -68,42 +68,42 @@ module.exports = (io, loginLimiter) => {
     router.post('/api/is-auth', authVerification, Login.sessionVerification);
 
     //Admin
-    router.post('/api/admin/usuario/create', Users.create);
+    router.post('/api/admin/usuario/create', auth, Users.create);
     router.post('/api/admin/usuario/update/:id', auth, Users.update);
     router.put('/api/admin/usuario/status/:id', auth, Users.updateStatus);
-    router.get('/api/admin/usuario/edit/:id', Users.buscarUsuario);
+    router.get('/api/admin/usuario/edit/:id', auth, Users.buscarUsuario);
     router.delete('/api/admin/usuario/delete/:id', auth, Users.delete);
-    router.get('/api/admin/usuario/buscar/:id', Users.buscarUsuarioId);
+    router.get('/api/admin/usuario/buscar/:id', auth, Users.buscarUsuarioId);
     router.get('/api/portal/usuario/buscar/:id', Users.consultarUsuarioPortal);
     router.post('/api/admin/usuario/export', auth, Admin.exportUser);
 
-    router.get('/api/admin/cadernos', Admin.listarCadernos);
+    router.get('/api/admin/cadernos', auth, Admin.listarCadernos);
     router.get('/api/portal/cadernos', Admin.listarCadernosPortal);
-    router.post('/api/admin/cadernos/count/perfis', Admin.countPerfis);
-    router.get('/api/admin/cadernos/buscar/', Admin.buscarRegistroCaderno);
+    router.post('/api/admin/cadernos/count/perfis', auth, Admin.countPerfis);
+    router.get('/api/admin/cadernos/buscar/', auth, Admin.buscarRegistroCaderno);
     router.post('/api/admin/cadernos/create', auth, Admin.criarCaderno);
     router.put('/api/admin/cadernos/update', auth, Admin.atualizarCadernos);
     router.delete('/api/admin/cadernos/delete/:id', auth, Admin.deleteCadernos);
-    router.get('/api/admin/cadernos/edit/:id', Admin.listarCadernoId);
+    router.get('/api/admin/cadernos/edit/:id', auth, Admin.listarCadernoId);
 
-    router.get('/api/admin/atividades/read', Admin.listarAtividades);
-    router.get('/api/admin/atividade', Admin.listarAtividadesId);
+    router.get('/api/admin/atividades/read', auth, Admin.listarAtividades);
+    router.get('/api/admin/atividade', auth, Admin.listarAtividadesId);
     router.put('/api/admin/atividade/update', auth, Admin.atualizarAtividades);
     router.delete('/api/admin/atividade/delete/:id', auth, Admin.deleteAtividade);
     router.post('/api/admin/atividade/create', auth, Admin.criarAtividade);
 
-    router.get('/api/admin/desconto/read', Admin.listarIds);
-    router.get('/api/admin/desconto/edit/:id', Admin.listarUserId);
+    router.get('/api/admin/desconto/read', auth, Admin.listarIds);
+    router.get('/api/admin/desconto/edit/:id', auth, Admin.listarUserId);
     router.put('/api/admin/desconto/update', auth, Admin.atualizarIds);
     router.put('/api/admin/desconto/status/:id', auth, Admin.updateUserStatus);
     router.post('/api/admin/desconto/create', auth, Admin.criarIds);
     router.delete('/api/admin/desconto/delete/:id', auth, Admin.deleteIds);
-    router.get('/api/admin/desconto/buscar/:id', Admin.buscarId);
-    router.get('/api/admin/desconto/aplicar/:id', Admin.aplicarDesconto);
-    router.get('/api/admin/desconto/read/all', Admin.buscarAllId);
-    router.get('/api/admin/desconto/usuario/buscar/:id', Admin.buscarUsuarioId);
-    router.get('/api/admin/desconto/ddd/:id', Admin.buscarDDD);
-    router.post('/api/admin/desconto/export', Admin.exportID);
+    router.get('/api/admin/desconto/buscar/:id', auth, Admin.buscarId);
+    router.get('/api/admin/desconto/aplicar/:id', auth, Admin.aplicarDesconto);
+    router.get('/api/admin/desconto/read/all', auth, Admin.buscarAllId);
+    router.get('/api/admin/desconto/usuario/buscar/:id', auth, Admin.buscarUsuarioId);
+    router.get('/api/admin/desconto/ddd/:id', auth, Admin.buscarDDD);
+    router.post('/api/admin/desconto/export', auth, Admin.exportID);
 
     /* router.get('/admin/desconto/read', Admin.listarIds);
     router.get('/admin/desconto/edit/:id', Admin.listarUserId);
@@ -114,15 +114,15 @@ module.exports = (io, loginLimiter) => {
     router.get('/admin/desconto/ddd/:id', Admin.buscarDDD); */
 
     //ANUNCIOS
-    router.get('/api/admin/espacos/read', EspacosController.listarEspacos);
-    router.get('/api/admin/anuncio/edit/:id', EspacosController.listarAnuncioId);
-    router.post('/api/admin/anuncio/create', EspacosController.criarAnuncio);
+    router.get('/api/admin/espacos/read', auth, EspacosController.listarEspacos);
+    router.get('/api/admin/anuncio/edit/:id', auth, EspacosController.listarAnuncioId);
+    router.post('/api/admin/anuncio/create', auth, EspacosController.criarAnuncio);
     router.put('/api/admin/anuncio/status/:id', auth, EspacosController.updateAnuncioStatus);
     router.put('/api/admin/anuncio/moderacao/:id', auth, EspacosController.atualizarModeracao);
     router.delete('/api/admin/anuncio/delete/:id', auth, EspacosController.deleteAnuncio);
-    router.put('/api/admin/anuncio/update', EspacosController.atualizarAnuncio);
-    router.put('/api/admin/anuncio/update/tipo', EspacosController.atualizarTipoPerfil);
-    router.get('/api/admin/anuncio/buscar', EspacosController.buscarAnuncioId);
+    router.put('/api/admin/anuncio/update', auth, EspacosController.atualizarAnuncio);
+    router.put('/api/admin/anuncio/update/tipo', auth, EspacosController.atualizarTipoPerfil);
+    router.get('/api/admin/anuncio/buscar', auth, EspacosController.buscarAnuncioId);
     router.get('/api/admin/anuncio/public', EspacosController.buscarAnuncioIdpublic);
     router.get('/api/admin/anuncio/visualizacoes', EspacosController.visualizacoes);
     router.post('/api/admin/anuncio/duplicate', auth, EspacosController.duplicar);
@@ -138,38 +138,38 @@ module.exports = (io, loginLimiter) => {
 
     //CAMPANHA PROMOÇÃO
     router.get('/api/admin/campanha/promocao/:codAnuncio/:hash', CampanhaController.verificarPromocao);
-    router.get('/api/admin/campanha/desconto/read', Admin.CampanhalistarIds);
-    router.post('/api/admin/campanha/create', CampanhaController.gerarCampanha);
-    router.get('/api/admin/campanha/read', CampanhaController.listarCampanha);
-    router.get('/api/admin/campanha/read/:hash', CampanhaController.listarUserCampanha);
-    router.delete('/api/admin/campanha/cancelar/:id', CampanhaController.cancelarCampanha);
-    router.get('/api/admin/campanha/verificar-arquivo/:id', CampanhaController.verificarArquivoCampanha);
+    router.get('/api/admin/campanha/desconto/read', auth, Admin.CampanhalistarIds);
+    router.post('/api/admin/campanha/create', auth, CampanhaController.gerarCampanha);
+    router.get('/api/admin/campanha/read', auth, CampanhaController.listarCampanha);
+    router.get('/api/admin/campanha/read/:hash', auth, CampanhaController.listarUserCampanha);
+    router.delete('/api/admin/campanha/cancelar/:id', auth, CampanhaController.cancelarCampanha);
+    router.get('/api/admin/campanha/verificar-arquivo/:id', auth, CampanhaController.verificarArquivoCampanha);
     
-    router.put('/api/admin/campanha/:hash', CampanhaController.dataAcesso);
-    router.put('/api/admin/campanha/status-link/:id', CampanhaController.ativarInativarLink);
+    router.put('/api/admin/campanha/:hash', auth, CampanhaController.dataAcesso);
+    router.put('/api/admin/campanha/status-link/:id', auth, CampanhaController.ativarInativarLink);
     //router.post('/api/admin/anuncio/promocao/criar', Admin.criarPromocao);
 
     //ROTAS MODULO PAGAMENTOS
-    router.get('/api/admin/pagamentos/read', Admin.listarPagamentos);
-    router.get('/api/admin/preco-base/read', Admin.listarValorBase);
+    router.get('/api/admin/pagamentos/read', auth, Admin.listarPagamentos);
+    router.get('/api/admin/preco-base/read', auth, Admin.listarValorBase);
     router.put('/api/admin/preco-base', auth, Admin.atualizarValorBase);
 
     //ROTAS MODULO PIN
-    router.get('/api/admin/pin/read', Admin.listarPin);
+    router.get('/api/admin/pin/read', auth, Admin.listarPin);
     router.post('/api/admin/pin/create', auth, Admin.criarPin);
     router.put('/api/admin/pin/update', auth, Admin.atualizarPin);
     router.delete('/api/admin/pin/delete/:id', auth, Admin.deletarPin);
-    router.get('/api/admin/pin/edit/:id', Admin.listarPinId);
+    router.get('/api/admin/pin/edit/:id', auth, Admin.listarPinId);
     router.get('/api/portal/pin/', Admin.listarPinPortal);
 
     //ROTAS MODULO CALHAU
-    router.get('/api/admin/calhau/read', Admin.listarCalhau);
+    router.get('/api/admin/calhau/read', auth, Admin.listarCalhau);
     router.post('/api/admin/calhau/create', auth, Admin.criarCalhau);
     router.delete('/api/admin/calhau/delete/:id', auth, Admin.deletarCalhau);
 
     //EXPORT OR IMPORT
-    router.post('/api/admin/anuncio/export', EspacosController.export4excell);
-    router.post('/api/admin/export/:modulo', Admin.exportPadrao);
+    router.post('/api/admin/anuncio/export', auth, EspacosController.export4excell);
+    router.post('/api/admin/export/:modulo', auth, Admin.exportPadrao);
 
     // Wrapper para passar o io
     function importWithSocket(req, res, next) {
@@ -178,14 +178,14 @@ module.exports = (io, loginLimiter) => {
     }
 
     // router.post('/api/admin/anuncio/import/:socketId', saveImport().single('uploadedfile'), importWithSocket);
-    router.get('/api/admin/anuncio/progress', Buscador.progressImport);
+    router.get('/api/admin/anuncio/progress', auth, Buscador.progressImport);
 
     //site
     router.post('/api/admin/usuario/criar-anuncio', Users.criarAnuncio);
     router.get('/api/pa', Users.qtdaAnuncio);
-    router.post('/api/upload-image', uploadUser.single('image'), Upload.uploadImg);
-    router.post('/api/upload-pdf', uploadPdf.single('file'), Upload.uploadPdf);
-    router.get('/api/list-image', Upload.listFiles);
+    router.post('/api/upload-image', auth, uploadUser.single('image'), Upload.uploadImg);
+    router.post('/api/upload-pdf', auth, uploadPdf.single('file'), Upload.uploadPdf);
+    router.get('/api/list-image', auth, Upload.listFiles);
 
     //ACÕES DO USUARIO
     router.get('/api/cartao-digital', UserActions.cartaoDigital);
@@ -194,7 +194,7 @@ module.exports = (io, loginLimiter) => {
     //EMAILS
     router.post('/api/contato', Email.contato);
     router.get('/api/caderno/legenda/:uf/:caderno', Admin.cadernoLegenda);
-    router.put('/api/caderno/legenda/:uf/:caderno', Admin.cadernoLegendaUpdate);
+    router.put('/api/caderno/legenda/:uf/:caderno', auth, Admin.cadernoLegendaUpdate);
 
 
     //EMAIL FALE COM O DONO
@@ -293,12 +293,12 @@ module.exports = (io, loginLimiter) => {
     });
 
     //SITE INSTITUCIONAL
-    router.post('/api/admin/institucional/config', InstConfig.atualizarRegistro);
-    router.get('/api/admin/institucional/read', InstConfig.lerRegistro);
+    router.post('/api/admin/institucional/config', auth, InstConfig.atualizarRegistro);
+    router.get('/api/admin/institucional/read', auth, InstConfig.lerRegistro);
 
     //SITE CONTATO
-    router.post('/api/admin/contato/config', contatoConfig.atualizarContato);
-    router.get('/api/admin/contato/read', contatoConfig.lerContato);
+    router.post('/api/admin/contato/config', auth, contatoConfig.atualizarContato);
+    router.get('/api/admin/contato/read', auth, contatoConfig.lerContato);
 
     //RECUPERAÇÃO DE SENHAS
     router.post('/api/forgot-password', RecuperarSenha.forgotPassword);

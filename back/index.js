@@ -116,7 +116,10 @@ const frontBuildPath = path.join(__dirname, '..', 'front', 'build');
 app.use(express.static(frontBuildPath));
 
 app.get('/api/files/2/download/:filename', (req, res) => {
-    const filename = req.params.filename;
+    const filename = path.basename(req.params.filename);
+    if (!filename || filename.includes('..') || filename.includes('/') || filename.includes('\\')) {
+        return res.status(400).send('Nome de arquivo inválido');
+    }
     const filePath = path.resolve(__dirname, "public", "upload", "img", "promocao", filename);
 
     res.download(filePath, filename, (err) => {
@@ -531,6 +534,15 @@ cron.schedule('0 3 * * *', () => {
 });
 
 
+
+// Global error handler
+app.use((err, req, res, next) => {
+    console.error('Unhandled error:', err.message);
+    if (err.type === 'entity.too.large') {
+        return res.status(413).json({ success: false, message: 'Payload muito grande' });
+    }
+    res.status(500).json({ success: false, message: 'Erro interno do servidor' });
+});
 
 app.get('*', (req, res) => {
     if (req.path.startsWith('/api')) {
