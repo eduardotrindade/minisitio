@@ -30,10 +30,10 @@ const Pin = database.define('pin', {
             },
         }
     }
-}/* ,
+},
     {
         freezeTableName: true,
         timestamps: false,
-    } */);
+    });
 
 module.exports = Pin;
