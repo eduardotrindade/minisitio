@@ -1,4 +1,13 @@
 @echo off
+REM =====================================================================
+REM iniciar.bat
+REM Descricao: Inicializador simples do Minisitio (sem Docker)
+REM            Inicia o Backend (Node.js na porta 3032) e o Frontend
+REM            (servidor estatico ou dev na porta 3000) em janelas
+REM            separadas. Mata processos previos nas portas, verifica
+REM            existencia do .env e abre o navegador automaticamente.
+REM Uso:       D duplo-clique ou execute no prompt nesta pasta
+REM =====================================================================
 chcp 65001 > nul
 title Minisitio — Inicializador
 

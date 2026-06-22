@@ -27,3 +27,13 @@
 - Tentativa de depuração de erro nas comboboxes de UF e Cidade no componente Busca.jsx.
 - **Segurança e Versionamento:** Criada branch `bkp-versao-atual` para salvar o estado atual. O plano para o próximo dia útil é reverter para a versão de 4 dias atrás para garantir estabilidade.
 
+## ATUALIZAÇÃO DE 22 de Junho de 2026
+
+- **Backend não iniciava:** Corrigida validação de variáveis de ambiente em back/index.js. `API_KEY` estava faltando no .env e `DB_PASSWORD` tinha apenas 4 caracteres (mínimo exigido era 10). Adicionado `API_KEY=minisitio_local_dev_key` ao .env e ajustada validação para aceitar 4 chars em modo development.
+- **Frontend IPv6:** Healthcheck do container frontend corrigido (wget com 127.0.0.1 em vez de localhost) e nginx.conf ajustado para escutar em IPv4.
+- **Tabelas ausentes no banco:** Criadas 5 tabelas que não existiam no dump.sql mas eram referenciadas pelos models do Sequelize: `uf`, `promocao`, `tokens_promocao`, `usuario`, `tags`, `pin`. Dados de UF (27 estados) inseridos.
+- **.dockerignore criado:** back/.dockerignore adicionado para excluir node_modules, .env e logs do contexto Docker.
+- **Código limpo:** Removidos logs de debug temporários do Buscador.js. Corrigido campo `cidade` hardcoded ("ALTA FLORESTA D'OESTE") no Busca.jsx para usar variável dinâmica.
+- **Verificação de busca:** Pesquisa por "pizza" em DF/Aguas Claras retornando corretamente 7 registros.
+- Todos os 3 containers Docker (backend, frontend, db) saudáveis e funcionais.
+

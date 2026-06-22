@@ -221,7 +221,7 @@ function Busca(props) {
                 },
                 body: JSON.stringify({
                     "uf": uf,
-                    "cidade": "ALTA FLORESTA D'OESTE",
+                    "cidade": cadernoCidade,
                     "atividade": valor_da_busca,
                     "name": "mycardcity",
                     "telefone": "(61) 3255-1285",

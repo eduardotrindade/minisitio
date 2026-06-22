@@ -1,0 +1,9 @@
+node_modules
+npm-debug.log
+.env
+.git
+.DS_Store
+logs
+backups
+public/import
+public/importLog.json

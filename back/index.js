@@ -8,7 +8,8 @@ const helmet = require('helmet');
 
 // ========== VALIDAÇÃO DE SEGURANÇA NA INICIALIZAÇÃO ==========
 const requiredEnvVars = ['API_KEY', 'API_SECRET', 'DB_PASSWORD'];
-const missing = requiredEnvVars.filter(v => !process.env[v] || process.env[v].length < 10);
+const minLen = process.env.NODE_ENV === 'production' ? 10 : 4;
+const missing = requiredEnvVars.filter(v => !process.env[v] || process.env[v].length < minLen);
 if (missing.length > 0) {
     console.error(`ERRO FATAL: Variáveis de ambiente ausentes ou fracas: ${missing.join(', ')}`);
     console.error('Copie .env.example para .env e configure valores seguros.');

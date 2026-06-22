@@ -1,4 +1,15 @@
 @echo off
+REM =====================================================================
+REM iniciar_robusto.bat
+REM Descricao: Inicializador robusto do Minisitio (sem Docker)
+REM            Versao estendida com 6 etapas: verifica pré-requisitos
+REM            (Node.js/npm), libera portas (3032, 3000, 3307), valida
+REM            o .env, verifica se o MySQL esta rodando na porta 3307,
+REM            instala dependencias automaticamente (npm install) e
+REM            inicia Backend + Frontend em janelas separadas.
+REM            Ideal para ambientes de desenvolvimento local sem Docker.
+REM Uso:       D duplo-clique ou execute no prompt nesta pasta
+REM =====================================================================
 chcp 65001 > nul
 title Minisitio — Inicializador Robusto v3
 
