@@ -7,7 +7,11 @@ const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
 
 // ========== VALIDAÇÃO DE SEGURANÇA NA INICIALIZAÇÃO ==========
-const requiredEnvVars = ['API_KEY', 'API_SECRET', 'DB_PASSWORD'];
+const requiredEnvVars = ['API_KEY', 'API_SECRET'];
+// DB_PASSWORD pode estar dentro de DATABASE_URL (Railway)
+if (!process.env.DATABASE_URL && !process.env.MYSQL_URL) {
+    requiredEnvVars.push('DB_PASSWORD');
+}
 const minLen = process.env.NODE_ENV === 'production' ? 10 : 4;
 const missing = requiredEnvVars.filter(v => !process.env[v] || process.env[v].length < minLen);
 if (missing.length > 0) {
