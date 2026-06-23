@@ -376,8 +376,6 @@ WHERE
         res.json(resultAtividades);
     },
     buscaAnuncio: async (req, res) => {
-        await database.sync();
-
         const codigoAnuncio = req.params.codAnuncio;
 
         //anuncio
