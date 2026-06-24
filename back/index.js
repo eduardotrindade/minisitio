@@ -99,7 +99,9 @@ const limiter = rateLimit({
 });
 
 app.use(limiter);
-app.use(helmet());
+app.use(helmet({
+    contentSecurityPolicy: false,
+}));
 
 const loginLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,

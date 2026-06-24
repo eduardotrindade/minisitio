@@ -65,10 +65,14 @@ const Espacos = () => {
             const searchValue = campoBusca.current?.value;
 
             if (searchValue && searchValue !== '') {
-                resAnuncio = await fetch(`${masterPath.url}/admin/anuncio/buscar?search=${searchValue}&page=${param}&require=${searchOptioncheck}&uf=${estadoSelecionado}&caderno=${cadernoSelecionado}`)
+                resAnuncio = await fetch(`${masterPath.url}/admin/anuncio/buscar?search=${searchValue}&page=${param}&require=${searchOptioncheck}&uf=${estadoSelecionado}&caderno=${cadernoSelecionado}`, {
+                    headers: { "authorization": 'Bearer ' + tokenAuth }
+                })
                     .then((x) => x.json());
             } else {
-                resAnuncio = await fetch(`${masterPath.url}/admin/espacos/read?page=${param}`)
+                resAnuncio = await fetch(`${masterPath.url}/admin/espacos/read?page=${param}`, {
+                    headers: { "authorization": 'Bearer ' + tokenAuth }
+                })
                     .then((x) => x.json());
             }
 
@@ -201,7 +205,9 @@ const Espacos = () => {
                             setShowSpinner(false);
                             //line.closest('tr').remove();
 
-                            fetch(`${masterPath.url}/admin/espacos/read?page=${param}`).then((x) => x.json())
+                            fetch(`${masterPath.url}/admin/espacos/read?page=${param}`, {
+                                headers: { "authorization": 'Bearer ' + sessionStorage.getItem('userTokenAccess') }
+                            }).then((x) => x.json())
                                 .then((resAnuncio) => {
                                     //console.log(resAnuncio.message.anuncios)
                                     setAnucios(resAnuncio);
@@ -325,7 +331,9 @@ const Espacos = () => {
             return;
         }
 
-        fetch(`${masterPath.url}/admin/anuncio/buscar/?search=${campoPesquisa}&require=${searchOptioncheck}&uf=${estadoSelecionado}&caderno=${cadernoSelecionado}`)
+        fetch(`${masterPath.url}/admin/anuncio/buscar/?search=${campoPesquisa}&require=${searchOptioncheck}&uf=${estadoSelecionado}&caderno=${cadernoSelecionado}`, {
+            headers: { "authorization": 'Bearer ' + tokenAuth }
+        })
             .then((x) => x.json())
             .then((res) => {
                 if (res.success) {
@@ -431,7 +439,8 @@ Para 100000 linhas: 312500ms
             fetch(`${masterPath.url}/admin/anuncio/export?page=${param}&limit=${anuncios.message.totalItem}&export=full&uf=${estadoSelecionado}&caderno=${campoCaderno.current.value}&require=${searchOptioncheck}&search=${campoPesquisa}`, {
                 method: "POST",
                 headers: {
-                    "Content-Type": "application/json"
+                    "Content-Type": "application/json",
+                    "authorization": 'Bearer ' + tokenAuth
                 },
                 body: JSON.stringify(anuncios.message.anuncios)
             })
@@ -488,7 +497,8 @@ Para 100000 linhas: 312500ms
             fetch(`${masterPath.url}/admin/anuncio/export?page=${param}&limit=${anuncios.message.totalItem}&export=full&uf=${estadoSelecionado}&caderno=${campoCaderno.current.value}&require=${searchOptioncheck}`, {
                 method: "POST",
                 headers: {
-                    "Content-Type": "application/json"
+                    "Content-Type": "application/json",
+                    "authorization": 'Bearer ' + tokenAuth
                 },
                 body: JSON.stringify(anuncios.message.anuncios)
             })

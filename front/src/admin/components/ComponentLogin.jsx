@@ -31,18 +31,27 @@ function Login() {
 
         setShowSpinner(true);
 
-        let loggin = await login(limparCPFouCNPJ(loginValue.current.value), passValue.current.value);
+        try {
+            let loggin = await login(limparCPFouCNPJ(loginValue.current.value), passValue.current.value);
 
-        if (!loggin) return;
-
-        if (loggin.success) {
-            if (loggin.codTipoUsuario === 1) {
-                navigate("/admin");
-            } else {
-                navigate(`/ver-anuncios/${loggin.descCPFCNPJ.replace(/[.-]/g, '')}`);
+            if (!loggin) {
+                setShowSpinner(false);
+                return;
             }
-        } else {
-            alert("Login ou senha incorreto");
+
+            if (loggin.success) {
+                if (Number(loggin.codTipoUsuario) === 1) {
+                    navigate("/admin");
+                } else {
+                    navigate(`/ver-anuncios/${loggin.descCPFCNPJ.replace(/[.-]/g, '')}`);
+                }
+            } else {
+                alert(loggin.message || "Login ou senha incorreto");
+                setShowSpinner(false);
+            }
+        } catch (err) {
+            console.error("Erro ao logar:", err);
+            alert("Erro ao conectar ao servidor: " + err.message);
             setShowSpinner(false);
         }
 

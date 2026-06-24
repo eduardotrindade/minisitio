@@ -29,9 +29,12 @@ const Pagamentos = () => {
 
     const param = getParam.get('page') ? getParam.get('page') : 1;
 
+    const tokenAuth = sessionStorage.getItem('userTokenAccess');
 
     useEffect(() => {
-        fetch(`${masterPath.url}/admin/pagamentos/read?page=${param}`)
+        fetch(`${masterPath.url}/admin/pagamentos/read?page=${param}`, {
+            headers: { "authorization": 'Bearer ' + tokenAuth }
+        })
             .then((x) => x.json())
             .then((res) => {
                 //setCidade(res.message.anuncios);
@@ -70,7 +73,11 @@ const Pagamentos = () => {
 
     function apagarUser() {
         fetch(`${masterPath.url}/admin/atividade/delete/${selectId}`, {
-            method: "DELETE"
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+                "authorization": 'Bearer ' + tokenAuth
+            }
         })
             .then((x) => x.json())
             .then((res) => {

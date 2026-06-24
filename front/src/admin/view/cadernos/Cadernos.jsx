@@ -70,7 +70,9 @@ const Cadernos = () => {
             setCountPerfis([]);
             setStatusCount(false);
             const campoPesquisa = document.getElementById('buscar').value;
-              fetch(`${masterPath.url}/admin/cadernos/buscar/?search=${campoPesquisa}&page=${param}`)
+              fetch(`${masterPath.url}/admin/cadernos/buscar/?search=${campoPesquisa}&page=${param}`, {
+                  headers: { "authorization": 'Bearer ' + tokenAuth }
+              })
                  .then((x) => x.json())
                  .then((res) => {
                      //console.log(res);
@@ -89,7 +91,9 @@ const Cadernos = () => {
             setCidade([]);
             setCountPerfis([]);
             setStatusCount(false);
-              fetch(`${masterPath.url}/admin/cadernos?page=${param}`)
+              fetch(`${masterPath.url}/admin/cadernos?page=${param}`, {
+                  headers: { "authorization": 'Bearer ' + tokenAuth }
+              })
                  .then((x) => x.json())
                  .then((res) => {
                      //console.log(res);
@@ -111,7 +115,9 @@ const Cadernos = () => {
          
        // fetchData()
         async function fetchData() {
-            const response = await fetch(`${masterPath.url}/admin/cadernos?page=${param}`);
+            const response = await fetch(`${masterPath.url}/admin/cadernos?page=${param}`, {
+                headers: { "authorization": 'Bearer ' + tokenAuth }
+            });
             const reader = response.body.getReader();
             const decoder = new TextDecoder('utf-8');
             let buffer = [];
@@ -179,7 +185,9 @@ const Cadernos = () => {
     function slecionarQuantidadeLinhas(e) {
 
         setShowSpinner(true);
-        fetch(`${masterPath.url}/admin/cadernos?page=${param}&rows=${e.target.value}`)
+        fetch(`${masterPath.url}/admin/cadernos?page=${param}&rows=${e.target.value}`, {
+            headers: { "authorization": 'Bearer ' + tokenAuth }
+        })
             .then((x) => x.json())
             .then((res) => {
                 //setEstado(res.data.estados);
@@ -200,7 +208,9 @@ const Cadernos = () => {
         setBuscaAtiva(true);
         setStatusCount(false);
         const campoPesquisa = document.getElementById('buscar').value;
-        fetch(`${masterPath.url}/admin/cadernos/buscar/?search=${campoPesquisa}`)
+        fetch(`${masterPath.url}/admin/cadernos/buscar/?search=${campoPesquisa}`, {
+            headers: { "authorization": 'Bearer ' + tokenAuth }
+        })
             .then((x) => x.json())
             .then((res) => {
                 //console.log("fsdfsdfasd", )
@@ -271,7 +281,8 @@ const Cadernos = () => {
         fetch(`${masterPath.url}/admin/export/cadernos?exportAll=${exportTodos}&limit=5000`, {
             method: "POST",
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                "authorization": 'Bearer ' + tokenAuth
             },
             body: JSON.stringify(cidadeBusca)
         })

@@ -63,7 +63,8 @@ export default function TableListCampanha({ campanhas, setShowSpinner, fetchCamp
         fetch(`${masterPath.url}/admin/campanha/cancelar/${campanha.id}`, {
           method: 'DELETE',
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'authorization': 'Bearer ' + sessionStorage.getItem('userTokenAccess')
           }
         })
           .then(x => x.json())
@@ -87,7 +88,8 @@ export default function TableListCampanha({ campanhas, setShowSpinner, fetchCamp
     fetch(`${masterPath.url}/admin/campanha/status-link/${campanha.id}`, {
       method: 'PUT',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'authorization': 'Bearer ' + sessionStorage.getItem('userTokenAccess')
       },
       body: JSON.stringify({ statusLink: status })
     })

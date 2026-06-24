@@ -30,7 +30,9 @@ const Pin = () => {
 
 
     useEffect(() => {
-        fetch(`${masterPath.url}/admin/pin/read?page=${param}`)
+        fetch(`${masterPath.url}/admin/pin/read?page=${param}`, {
+            headers: { "authorization": 'Bearer ' + sessionStorage.getItem('userTokenAccess') }
+        })
             .then((x) => x.json())
             .then((res) => {
                 //setCidade(res.message.anuncios);
@@ -75,7 +77,9 @@ const Pin = () => {
             .then((res) => {
                 setShowSpinner(true);
                 if (res.success) {
-                    fetch(`${masterPath.url}/admin/pin/read?page=${param}`)
+                    fetch(`${masterPath.url}/admin/pin/read?page=${param}`, {
+                        headers: { "authorization": 'Bearer ' + tokenAuth }
+                    })
                         .then((x) => x.json())
                         .then((res) => {
                             //setCidade(res.message.anuncios);
@@ -93,7 +97,9 @@ const Pin = () => {
         setShowSpinner(true);
         const campoPesquisa = document.getElementById('buscar');
 
-        fetch(`${masterPath.url}/admin/atividade?nome=${campoPesquisa.value}`)
+        fetch(`${masterPath.url}/admin/atividade?nome=${campoPesquisa.value}`, {
+            headers: { "authorization": 'Bearer ' + tokenAuth }
+        })
             .then((x) => x.json())
             .then((res) => {
                 if (res.success) {

@@ -34,7 +34,9 @@ const Atividades = () => {
     const tokenAuth = sessionStorage.getItem('userTokenAccess');
 
     useEffect(() => {
-        fetch(`${masterPath.url}/admin/atividades/read?page=${param}`)
+        fetch(`${masterPath.url}/admin/atividades/read?page=${param}`, {
+            headers: { "authorization": 'Bearer ' + tokenAuth }
+        })
             .then((x) => x.json())
             .then((res) => {
                 //setCidade(res.message.anuncios);
@@ -90,7 +92,9 @@ const Atividades = () => {
             .then((res) => {
                 if (res && res.success) {
                     setShowSpinner(true);
-                    fetch(`${masterPath.url}/admin/atividades/read?page=${param}`)
+                    fetch(`${masterPath.url}/admin/atividades/read?page=${param}`, {
+                        headers: { "authorization": 'Bearer ' + tokenAuth }
+                    })
                         .then((x) => x.json())
                         .then((res) => {
                             setAtividades(res.message.atividades)
@@ -107,7 +111,9 @@ const Atividades = () => {
         setShowSpinner(true);
         const campoPesquisa = document.getElementById('buscar');
 
-        fetch(`${masterPath.url}/admin/atividade?nome=${campoPesquisa.value}`)
+        fetch(`${masterPath.url}/admin/atividade?nome=${campoPesquisa.value}`, {
+            headers: { "authorization": 'Bearer ' + tokenAuth }
+        })
             .then((x) => x.json())
             .then((res) => {
                 if (res.success) {
@@ -131,7 +137,8 @@ const Atividades = () => {
         fetch(`${masterPath.url}/admin/export/atividades`, {
             method: "POST",
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                "authorization": 'Bearer ' + tokenAuth
             },
             body: JSON.stringify(atividades)
         })

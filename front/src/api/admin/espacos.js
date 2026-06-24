@@ -1,7 +1,9 @@
 import { masterPath, version } from '../../config/config';
 
 async function fetchEspacos(page) {
-        const espacosFetch = await fetch(`${masterPath.url}/admin/espacos/read?page=${page}`)
+        const espacosFetch = await fetch(`${masterPath.url}/admin/espacos/read?page=${page}`, {
+            headers: { "authorization": 'Bearer ' + sessionStorage.getItem('userTokenAccess') }
+        })
 
         const result = await espacosFetch.json();
 

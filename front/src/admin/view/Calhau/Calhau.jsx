@@ -26,9 +26,13 @@ const Calhau = () => {
 
     const param = getParam.get('page') ? getParam.get('page') : 1;
 
+    const tokenAuth = sessionStorage.getItem('userTokenAccess');
+
 
     useEffect(() => {
-        fetch(`${masterPath.url}/admin/calhau/read?page=${param}`)
+        fetch(`${masterPath.url}/admin/calhau/read?page=${param}`, {
+            headers: { "authorization": 'Bearer ' + tokenAuth }
+        })
             .then((x) => x.json())
             .then((res) => {
                 setCalhaus(res.message.frases)
@@ -68,7 +72,9 @@ const Calhau = () => {
             .then((res) => {
                 setShowSpinner(true);
                 if (res.success) {
-                    fetch(`${masterPath.url}/admin/calhau/read?page=${param}`)
+                    fetch(`${masterPath.url}/admin/calhau/read?page=${param}`, {
+                        headers: { "authorization": 'Bearer ' + tokenAuth }
+                    })
                         .then((x) => x.json())
                         .then((res) => {
                             setCalhaus(res.message.frases)
@@ -85,7 +91,9 @@ const Calhau = () => {
         setShowSpinner(true);
         const campoPesquisa = document.getElementById('buscar');
 
-        fetch(`${masterPath.url}/admin/atividade?nome=${campoPesquisa.value}`)
+        fetch(`${masterPath.url}/admin/atividade?nome=${campoPesquisa.value}`, {
+            headers: { "authorization": 'Bearer ' + tokenAuth }
+        })
             .then((x) => x.json())
             .then((res) => {
                 if (res.success) {
@@ -113,10 +121,7 @@ const Calhau = () => {
 
     return (
         <div className="PIN">
-            <header style={style} className='w-100'>
-                <Header />
-            </header>
-            <section className="pt-5">
+            <section className="pt-2">
                 {showSpinner && <Spinner />}
 
                 <h1 className="pt-4 px-4">CONFIGURAÇÃO DO CALHAU</h1>

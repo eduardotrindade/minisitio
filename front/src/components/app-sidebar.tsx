@@ -21,9 +21,9 @@ import { Dropdown } from "react-bootstrap";
 
 const items = [
     {
-        title: "Home",
-        url: "/admin",
-        icon: Home,
+        title: "Dashboard",
+        url: "/admin/dashboard",
+        icon: ChartNoAxesCombined,
     },
     {
         title: "Usuários",
@@ -59,16 +59,6 @@ const items = [
         title: "PINs",
         url: "/admin/pin",
         icon: Star,
-    },
-    {
-        title: "Campanha",
-        url: "/admin/campanha",
-        icon: ChartNoAxesCombined,
-    },
-    {
-        title: "Configuração",
-        url: "/admin/configuracoes",
-        icon: Settings,
     },
 ]
 

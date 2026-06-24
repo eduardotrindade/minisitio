@@ -62,7 +62,9 @@ const FormEdit = () => {
         setShowSpinner(true);
 
 
-        fetch(`${masterPath.url}/admin/usuario/buscar/master?require=codTipoUsuario`)
+        fetch(`${masterPath.url}/admin/usuario/buscar/master?require=codTipoUsuario`, {
+            headers: { "authorization": 'Bearer ' + sessionStorage.getItem('userTokenAccess') }
+        })
             .then((x) => x.json())
             .then((res) => {
                 if (res.success) {
@@ -70,7 +72,9 @@ const FormEdit = () => {
                     setUsuarios(res.usuarios);
                     setShowSpinner(false);
 
-                    fetch(`${masterPath.url}/admin/desconto/edit/${param}`)
+                    fetch(`${masterPath.url}/admin/desconto/edit/${param}`, {
+                        headers: { "authorization": 'Bearer ' + sessionStorage.getItem('userTokenAccess') }
+                    })
                         .then((x) => x.json())
                         .then((res) => {
                             setIds(res[0]);

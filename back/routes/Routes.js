@@ -137,8 +137,54 @@ module.exports = (io, loginLimiter) => {
     router.get('/api/admin/import/stage', EspacosController.importStage);
     router.get('/api/admin/import/stage/finalizar', EspacosController.finalizarImportStage);
 
-    //DASHBOARD - Fase 1: dados rapidos (1 query consolidada)
+    //DASHBOARD - Leitura do cache (instantanea)
     router.get('/api/admin/dashboard', auth, async (req, res) => {
+        try {
+            const [cache] = await database.query(
+                `SELECT * FROM dashboard_cache WHERE id = 1`,
+                { type: database.QueryTypes.SELECT }
+            );
+
+            if (!cache || !cache.lastUpdated) {
+                return res.json({
+                    success: true,
+                    data: {
+                        total: 0, basico: 0, completo: 0, ativos: 0, inativos: 0,
+                        semEmail: null, semTelefone: null, semEmailETelefone: null,
+                        expirados: 0, expiraEm30Dias: 0,
+                        porUf: [], porMes: [], cadernosPorUf: [],
+                        lastUpdated: null
+                    }
+                });
+            }
+
+            res.json({
+                success: true,
+                data: {
+                    total: cache.total,
+                    basico: cache.basico,
+                    completo: cache.completo,
+                    ativos: cache.ativos,
+                    inativos: cache.inativos,
+                    semEmail: null,
+                    semTelefone: null,
+                    semEmailETelefone: null,
+                    expirados: cache.expirados,
+                    expiraEm30Dias: cache.expiraEm30Dias,
+                    porUf: JSON.parse(cache.porUf_json || '[]'),
+                    porMes: JSON.parse(cache.porMes_json || '[]'),
+                    cadernosPorUf: JSON.parse(cache.cadernosPorUf_json || '[]'),
+                    lastUpdated: cache.lastUpdated
+                }
+            });
+        } catch (error) {
+            console.error('Erro no dashboard:', error);
+            res.status(500).json({ success: false, message: 'Erro ao buscar dados do dashboard' });
+        }
+    });
+
+    //DASHBOARD - Atualizar cache (queries lentas)
+    router.post('/api/admin/dashboard/refresh', auth, async (req, res) => {
         try {
             const [stats] = await database.query(
                 `SELECT
@@ -147,9 +193,6 @@ module.exports = (io, loginLimiter) => {
                     SUM(CASE WHEN codTipoAnuncio = '3' THEN 1 ELSE 0 END) as completo,
                     SUM(CASE WHEN activate = 1 THEN 1 ELSE 0 END) as ativos,
                     SUM(CASE WHEN activate = 0 THEN 1 ELSE 0 END) as inativos,
-                    SUM(CASE WHEN descEmailComercial IS NULL OR descEmailComercial = '' OR descEmailComercial = 'atualizar' OR descEmailComercial = '0' THEN 1 ELSE 0 END) as semEmail,
-                    SUM(CASE WHEN descTelefone IS NULL OR descTelefone = '' OR descTelefone = 'atualizar' THEN 1 ELSE 0 END) as semTelefone,
-                    SUM(CASE WHEN (descEmailComercial IS NULL OR descEmailComercial = '' OR descEmailComercial = 'atualizar' OR descEmailComercial = '0') AND (descTelefone IS NULL OR descTelefone = '' OR descTelefone = 'atualizar') THEN 1 ELSE 0 END) as semEmailETelefone,
                     SUM(CASE WHEN activate = 1 AND dueDate IS NOT NULL AND dueDate < NOW() THEN 1 ELSE 0 END) as expirados,
                     SUM(CASE WHEN activate = 1 AND dueDate IS NOT NULL AND dueDate BETWEEN NOW() AND DATE_ADD(NOW(), INTERVAL 30 DAY) THEN 1 ELSE 0 END) as expiraEm30Dias
                  FROM anuncio`,
@@ -177,27 +220,78 @@ module.exports = (io, loginLimiter) => {
 
             const cadernosPorUf = await database.query(`SELECT UF, COUNT(*) as total FROM caderno GROUP BY UF ORDER BY total DESC`, { type: database.QueryTypes.SELECT });
 
-            res.json({
-                success: true,
-                data: {
-                    total: stats.total,
-                    basico: stats.basico,
-                    completo: stats.completo,
-                    ativos: stats.ativos,
-                    inativos: stats.inativos,
-                    semEmail: stats.semEmail,
-                    semTelefone: stats.semTelefone,
-                    semEmailETelefone: stats.semEmailETelefone,
-                    expirados: stats.expirados,
-                    expiraEm30Dias: stats.expiraEm30Dias,
-                    porUf,
-                    porMes,
-                    cadernosPorUf
+            await database.query(
+                `INSERT INTO dashboard_cache (id, total, basico, completo, ativos, inativos, expirados, expiraEm30Dias, porUf_json, porMes_json, cadernosPorUf_json, lastUpdated)
+                 VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
+                 ON DUPLICATE KEY UPDATE
+                    total=VALUES(total), basico=VALUES(basico), completo=VALUES(completo),
+                    ativos=VALUES(ativos), inativos=VALUES(inativos),
+                    expirados=VALUES(expirados), expiraEm30Dias=VALUES(expiraEm30Dias),
+                    porUf_json=VALUES(porUf_json), porMes_json=VALUES(porMes_json),
+                    cadernosPorUf_json=VALUES(cadernosPorUf_json), lastUpdated=NOW()`,
+                {
+                    replacements: [
+                        stats.total, stats.basico, stats.completo, stats.ativos, stats.inativos,
+                        stats.expirados, stats.expiraEm30Dias,
+                        JSON.stringify(porUf), JSON.stringify(porMes), JSON.stringify(cadernosPorUf)
+                    ],
+                    type: database.QueryTypes.INSERT
                 }
-            });
+            );
+
+            res.json({ success: true, message: 'Cache atualizado', lastUpdated: new Date() });
         } catch (error) {
-            console.error('Erro no dashboard:', error);
-            res.status(500).json({ success: false, message: 'Erro ao buscar dados do dashboard' });
+            console.error('Erro ao atualizar cache do dashboard:', error);
+            res.status(500).json({ success: false, message: 'Erro ao atualizar cache' });
+        }
+    });
+
+    //DASHBOARD - Atualizar cache de contatos (colunas TEXT - lento)
+    router.post('/api/admin/dashboard/refresh-contatos', auth, async (req, res) => {
+        try {
+            const [contatos] = await database.query(
+                `SELECT
+                    SUM(CASE WHEN descEmailComercial IS NULL OR descEmailComercial = '' OR descEmailComercial = 'atualizar' OR descEmailComercial = '0' THEN 1 ELSE 0 END) as semEmail,
+                    SUM(CASE WHEN descTelefone IS NULL OR descTelefone = '' OR descTelefone = 'atualizar' THEN 1 ELSE 0 END) as semTelefone,
+                    SUM(CASE WHEN (descEmailComercial IS NULL OR descEmailComercial = '' OR descEmailComercial = 'atualizar' OR descEmailComercial = '0') AND (descTelefone IS NULL OR descTelefone = '' OR descTelefone = 'atualizar') THEN 1 ELSE 0 END) as semEmailETelefone
+                 FROM anuncio WHERE activate = 1`,
+                { type: database.QueryTypes.SELECT }
+            );
+
+            await database.query(
+                `UPDATE dashboard_cache SET semEmail=?, semTelefone=?, semEmailETelefone=?, contatos_json=?, lastUpdated=NOW() WHERE id=1`,
+                {
+                    replacements: [
+                        contatos.semEmail, contatos.semTelefone, contatos.semEmailETelefone,
+                        JSON.stringify(contatos)
+                    ],
+                    type: database.QueryTypes.UPDATE
+                }
+            );
+
+            res.json({ success: true, message: 'Cache de contatos atualizado', data: contatos });
+        } catch (error) {
+            console.error('Erro ao atualizar cache de contatos:', error);
+            res.status(500).json({ success: false, message: 'Erro ao atualizar cache de contatos' });
+        }
+    });
+
+    //DASHBOARD - Ler contatos do cache
+    router.get('/api/admin/dashboard/contatos', auth, async (req, res) => {
+        try {
+            const [cache] = await database.query(
+                `SELECT contatos_json FROM dashboard_cache WHERE id = 1`,
+                { type: database.QueryTypes.SELECT }
+            );
+
+            if (!cache || !cache.contatos_json) {
+                return res.json({ success: true, data: { semEmail: null, semTelefone: null, semEmailETelefone: null } });
+            }
+
+            res.json({ success: true, data: JSON.parse(cache.contatos_json) });
+        } catch (error) {
+            console.error('Erro ao ler cache de contatos:', error);
+            res.status(500).json({ success: false, message: 'Erro ao ler cache de contatos' });
         }
     });
 

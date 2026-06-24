@@ -58,7 +58,9 @@ const FormCadastro = () => {
 
     useEffect(() => {
         setShowSpinner(true);
-        fetch(`${masterPath.url}/admin/usuario/buscar/master?require=codTipoUsuario`)
+        fetch(`${masterPath.url}/admin/usuario/buscar/master?require=codTipoUsuario`, {
+            headers: { "authorization": 'Bearer ' + tokenAuth }
+        })
             .then((x) => x.json())
             .then((res) => {
                 if (res.success) {
@@ -80,7 +82,9 @@ const FormCadastro = () => {
         let codigoDoMaster = e.target.value;
         usuarios.find((item) => {
             if (item.codUsuario === codigoDoMaster) {
-                fetch(`${masterPath.url}/admin/desconto/ddd/${item.codUf}`)
+                fetch(`${masterPath.url}/admin/desconto/ddd/${item.codUf}`, {
+                    headers: { "authorization": 'Bearer ' + tokenAuth }
+                })
                     .then((x) => x.json())
                     .then((res) => {
                         //console.log(res.data.ddd, String(item.codUsuario).padStart(3, "0"), String(res.qtdeIds).padStart(4, "0"))

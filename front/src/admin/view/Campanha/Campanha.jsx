@@ -41,6 +41,8 @@ const Campanha = () => {
 
     const param = getParam.get('page') ? getParam.get('page') : 1;
 
+    const tokenAuth = sessionStorage.getItem('userTokenAccess');
+
 
     function selecaoLinha(event) {
 
@@ -71,7 +73,9 @@ const Campanha = () => {
             .then((res) => {
                 setShowSpinner(true);
                 if (res.success) {
-                    fetch(`${masterPath.url}/admin/calhau/read?page=${param}`)
+                    fetch(`${masterPath.url}/admin/calhau/read?page=${param}`, {
+                        headers: { "authorization": 'Bearer ' + tokenAuth }
+                    })
                         .then((x) => x.json())
                         .then((res) => {
                             setCalhaus(res.message.frases)
@@ -88,7 +92,9 @@ const Campanha = () => {
         setShowSpinner(true);
         const campoPesquisa = document.getElementById('buscar');
 
-        fetch(`${masterPath.url}/admin/atividade?nome=${campoPesquisa.value}`)
+        fetch(`${masterPath.url}/admin/atividade?nome=${campoPesquisa.value}`, {
+            headers: { "authorization": 'Bearer ' + tokenAuth }
+        })
             .then((x) => x.json())
             .then((res) => {
                 if (res.success) {
@@ -123,7 +129,9 @@ const Campanha = () => {
     const [campanhas, setCampanhas] = useState([]);
 
     function fetchCampanhas() {
-        fetch(`${masterPath.url}/admin/campanha/read`)
+        fetch(`${masterPath.url}/admin/campanha/read`, {
+            headers: { "authorization": 'Bearer ' + tokenAuth }
+        })
             .then((x) => x.json())
             .then((res) => {
                 if (res.success) {

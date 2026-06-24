@@ -23,7 +23,9 @@ export default function FormCampanha({ fetchCampanhas, setShowSpinner, setShow }
 
     useEffect(() => {
         setShowSpinner(true);
-        fetch(`${masterPath.url}/admin/campanha/desconto/read`)
+        fetch(`${masterPath.url}/admin/campanha/desconto/read`, {
+            headers: { "authorization": 'Bearer ' + sessionStorage.getItem('userTokenAccess') }
+        })
             .then((x) => x.json())
             .then((res) => {
                 setShowSpinner(false)

@@ -39,11 +39,15 @@ const GerenciarIds = () => {
 
     const campoBusca = useRef(null);
 
+    const tokenAuth = sessionStorage.getItem('userTokenAccess');
+
     useEffect(() => {
         setShowSpinner(true);
 
         Promise.all([
-            fetch(`${masterPath.url}/admin/desconto/read?page=${param}`).then((x) => x.json()),
+            fetch(`${masterPath.url}/admin/desconto/read?page=${param}`, {
+                headers: { "authorization": 'Bearer ' + tokenAuth }
+            }).then((x) => x.json()),
             //fetch(`${masterPath.url}/admin/usuario/buscar/all`).then((x) => x.json())
         ])
             .then(([resDesconto, resUsuarios]) => {
@@ -87,7 +91,7 @@ const GerenciarIds = () => {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json",
-                "authorization": 'Bearer ' + masterPath.accessToken
+                "authorization": 'Bearer ' + tokenAuth
             },
         })
             .then((x) => {
@@ -118,7 +122,9 @@ const GerenciarIds = () => {
         setShowSpinner(true);
         const campoPesquisa = document.getElementById('buscar');
 
-        fetch(`${masterPath.url}/admin/desconto/buscar/${campoPesquisa.value}`)
+        fetch(`${masterPath.url}/admin/desconto/buscar/${campoPesquisa.value}`, {
+            headers: { "authorization": 'Bearer ' + tokenAuth }
+        })
             .then((x) => x.json())
             .then((res) => {
                 

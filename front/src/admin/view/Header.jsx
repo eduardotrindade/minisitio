@@ -57,21 +57,16 @@ function Header() {
                             <Link className="nav-link" to="/admin/dashboard" onClick={handleClick}>Dashboard</Link>
                         </li>
                         <li className="nav-item">
-                            {/* <a className="nav-link" href="#">Usuários</a> */}
-                            <Link className="nav-link" to="/admin/users" onClick={handleClick}>Usuários</Link>
+                            <Link className="nav-link" to="/admin/users" onClick={handleClick}>Usuarios</Link>
                         </li>
                         <li className="nav-item">
                             <Link className="nav-link" to="/admin/cadernos" onClick={handleClick}>Cadernos</Link>
                         </li>
-                        {/*desativado*/}
-                        {/*     <li className="nav-item">
-                            <Link className="nav-link" to="/info/cadernos">Informações de Cadernos</Link>
-                        </li> */}
                         <li className="nav-item">
                             <Link className="nav-link" id="modu-atividade" to="/admin/atividades" onClick={handleClick}>Atividades</Link>
                         </li>
                         <li className="nav-item">
-                            <Link className="nav-link espacos" to="/admin/espacos" onClick={handleClick}>Espaços</Link>
+                            <Link className="nav-link espacos" to="/admin/espacos" onClick={handleClick}>Espacos</Link>
                         </li>
                         <li className="nav-item">
                             <Link className="nav-link" to="/admin/desconto" onClick={handleClick}>Gerenciar IDs</Link>
@@ -79,41 +74,8 @@ function Header() {
                         <li className="nav-item">
                             <Link className="nav-link" to="/admin/pagamentos" onClick={handleClick}>Pagamentos</Link>
                         </li>
-                        {/*       <li className="nav-item">
-                            <a className="nav-link" href="#">Relatórios Funil</a>
-                        </li> */}
                         <li className="nav-item">
                             <Link className="nav-link" to="/admin/pin" onClick={handleClick}>PINs</Link>
-                            {/* <a className="nav-link" href="#">PINs</a> */}
-                        </li>
-                        <li className="nav-item">
-                            <div className="dropdown menu-mais">
-                                <button className="btn dropdown-toggle nav-link" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                                    Mais
-                                    <i className="bi bi-chevron-down mx-1"></i>
-                                </button>
-                                <ul className="dropdown-menu lista-cart" aria-labelledby="dropdownMenuButton1">
-                                    {/*  <li>
-                                        <Link className="dropdown-item nav-link" to="/admin/calhau" onClick={handleClick}>
-                                        Calhau
-                                        <i className="bi bi-chevron-right mx-1"></i>
-                                        </Link>                                     
-                                    </li> */}
-                                        <li>
-                                        <Link className="dropdown-item nav-link" to="/admin/campanha" onClick={handleClick}>
-                                            Campanha
-                                            <i className="bi bi-chevron-right mx-1"></i>
-                                        </Link>
-                                    </li>
-                                    <li>
-                                        <Link className="dropdown-item nav-link" to="/admin/configuracoes" onClick={handleClick}>
-                                            Configuração
-                                            <i className="bi bi-chevron-right mx-1"></i>
-                                        </Link>
-                                    </li>
-                                
-                                </ul>
-                            </div>
                         </li>
 
                         <li className="nav-item">
