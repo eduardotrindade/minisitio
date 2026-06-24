@@ -137,31 +137,22 @@ module.exports = (io, loginLimiter) => {
     router.get('/api/admin/import/stage', EspacosController.importStage);
     router.get('/api/admin/import/stage/finalizar', EspacosController.finalizarImportStage);
 
-    //DASHBOARD
+    //DASHBOARD - Fase 1: dados rapidos (1 query consolidada)
     router.get('/api/admin/dashboard', auth, async (req, res) => {
         try {
-            const [totalResult] = await database.query(
-                `SELECT COUNT(*) as total FROM anuncio`,
-                { type: database.QueryTypes.SELECT }
-            );
-
-            const [basicoResult] = await database.query(
-                `SELECT COUNT(*) as total FROM anuncio WHERE codTipoAnuncio = '1'`,
-                { type: database.QueryTypes.SELECT }
-            );
-
-            const [completoResult] = await database.query(
-                `SELECT COUNT(*) as total FROM anuncio WHERE codTipoAnuncio = '3'`,
-                { type: database.QueryTypes.SELECT }
-            );
-
-            const [ativosResult] = await database.query(
-                `SELECT COUNT(*) as total FROM anuncio WHERE activate = 1`,
-                { type: database.QueryTypes.SELECT }
-            );
-
-            const [inativosResult] = await database.query(
-                `SELECT COUNT(*) as total FROM anuncio WHERE activate = 0`,
+            const [stats] = await database.query(
+                `SELECT
+                    COUNT(*) as total,
+                    SUM(CASE WHEN codTipoAnuncio = '1' THEN 1 ELSE 0 END) as basico,
+                    SUM(CASE WHEN codTipoAnuncio = '3' THEN 1 ELSE 0 END) as completo,
+                    SUM(CASE WHEN activate = 1 THEN 1 ELSE 0 END) as ativos,
+                    SUM(CASE WHEN activate = 0 THEN 1 ELSE 0 END) as inativos,
+                    SUM(CASE WHEN descEmailComercial IS NULL OR descEmailComercial = '' OR descEmailComercial = 'atualizar' OR descEmailComercial = '0' THEN 1 ELSE 0 END) as semEmail,
+                    SUM(CASE WHEN descTelefone IS NULL OR descTelefone = '' OR descTelefone = 'atualizar' THEN 1 ELSE 0 END) as semTelefone,
+                    SUM(CASE WHEN (descEmailComercial IS NULL OR descEmailComercial = '' OR descEmailComercial = 'atualizar' OR descEmailComercial = '0') AND (descTelefone IS NULL OR descTelefone = '' OR descTelefone = 'atualizar') THEN 1 ELSE 0 END) as semEmailETelefone,
+                    SUM(CASE WHEN activate = 1 AND dueDate IS NOT NULL AND dueDate < NOW() THEN 1 ELSE 0 END) as expirados,
+                    SUM(CASE WHEN activate = 1 AND dueDate IS NOT NULL AND dueDate BETWEEN NOW() AND DATE_ADD(NOW(), INTERVAL 30 DAY) THEN 1 ELSE 0 END) as expiraEm30Dias
+                 FROM anuncio`,
                 { type: database.QueryTypes.SELECT }
             );
 
@@ -184,21 +175,89 @@ module.exports = (io, loginLimiter) => {
                 { type: database.QueryTypes.SELECT }
             );
 
+            const cadernosPorUf = await database.query(`SELECT UF, COUNT(*) as total FROM caderno GROUP BY UF ORDER BY total DESC`, { type: database.QueryTypes.SELECT });
+
             res.json({
                 success: true,
                 data: {
-                    total: totalResult.total,
-                    basico: basicoResult.total,
-                    completo: completoResult.total,
-                    ativos: ativosResult.total,
-                    inativos: inativosResult.total,
+                    total: stats.total,
+                    basico: stats.basico,
+                    completo: stats.completo,
+                    ativos: stats.ativos,
+                    inativos: stats.inativos,
+                    semEmail: stats.semEmail,
+                    semTelefone: stats.semTelefone,
+                    semEmailETelefone: stats.semEmailETelefone,
+                    expirados: stats.expirados,
+                    expiraEm30Dias: stats.expiraEm30Dias,
                     porUf,
-                    porMes
+                    porMes,
+                    cadernosPorUf
                 }
             });
         } catch (error) {
             console.error('Erro no dashboard:', error);
             res.status(500).json({ success: false, message: 'Erro ao buscar dados do dashboard' });
+        }
+    });
+
+    router.get('/api/admin/dashboard/capa', auth, async (req, res) => {
+        try {
+            const capaAtividades = [
+                'ADMINISTRAÇÃO REGIONAL / PREFEITURA', 'EMERGÊNCIA', 'UTILIDADE PÚBLICA', 'HOSPITAIS PÚBLICOS',
+                'CÂMARA DE VEREADORES - CÂMARA DISTRITAL', 'SECRETARIA DE TURISMO', 'INFORMAÇÕES', 'EVENTOS NA CIDADE'
+            ];
+            const placeholders = capaAtividades.map(() => '?').join(',');
+
+            const [capaPairs, cadernos] = await Promise.all([
+                database.query(
+                    `SELECT DISTINCT codCaderno, codAtividade FROM anuncio WHERE activate = 1 AND codAtividade IN (${placeholders})`,
+                    { replacements: capaAtividades, type: database.QueryTypes.SELECT }
+                ),
+                database.query(`SELECT codCaderno, nomeCaderno, UF FROM caderno`, { type: database.QueryTypes.SELECT })
+            ]);
+
+            const capaMap = {};
+            for (const pair of capaPairs) {
+                if (!capaMap[pair.codCaderno]) capaMap[pair.codCaderno] = new Set();
+                capaMap[pair.codCaderno].add(pair.codAtividade);
+            }
+
+            const ufStats = {};
+            let completa = 0, falta_1 = 0, falta_2 = 0, falta_3 = 0, falta_4 = 0, falta_5 = 0, falta_6 = 0, falta_7 = 0, sem_nenhuma = 0;
+            let totalCadernos = 0;
+
+            for (const c of cadernos) {
+                totalCadernos++;
+                const count = (capaMap[c.nomeCaderno] || new Set()).size;
+                if (count === 8) completa++;
+                else if (count === 7) falta_1++;
+                else if (count === 6) falta_2++;
+                else if (count === 5) falta_3++;
+                else if (count === 4) falta_4++;
+                else if (count === 3) falta_5++;
+                else if (count === 2) falta_6++;
+                else if (count === 1) falta_7++;
+                else sem_nenhuma++;
+
+                if (!ufStats[c.UF]) ufStats[c.UF] = { UF: c.UF, total_cadernos: 0, completa: 0, sem_nenhuma: 0 };
+                ufStats[c.UF].total_cadernos++;
+                if (count === 8) ufStats[c.UF].completa++;
+                else if (count === 0) ufStats[c.UF].sem_nenhuma++;
+            }
+
+            res.json({
+                success: true,
+                data: {
+                    capaGeral: {
+                        total_cadernos: totalCadernos, completa, falta_1, falta_2, falta_3, falta_4, falta_5, falta_6, falta_7, sem_nenhuma
+                    },
+                    capaPorUf: Object.values(ufStats).sort((a, b) => b.total_cadernos - a.total_cadernos)
+                }
+            });
+        } catch (error) {
+            console.error('Erro no dashboard capa:', error);
+            res.status(500).json({ success: false, message: 'Erro ao buscar dados da capa' });
         }
     });
 

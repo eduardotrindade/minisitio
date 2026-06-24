@@ -257,7 +257,7 @@ module.exports = {
     },
     listarEspacos: async (req, res) => {
 
-        //await database.sync();
+        //// await database.sync(); // REMOVED: sync should not run per-request
 
         const paginaAtual = req.query.page ? parseInt(req.query.page) : 1; // Página atual, padrão: 1
         const porPagina = 10; // Número de itens por página
@@ -348,7 +348,7 @@ module.exports = {
     },
     listarEspacosold: async (req, res) => {
 
-        await database.sync();
+        // await database.sync(); // REMOVED: sync should not run per-request
 
         const paginaAtual = req.query.page ? parseInt(req.query.page) : 1; // Página atual, padrão: 1
         const porPagina = 10; // Número de itens por página
@@ -2015,7 +2015,7 @@ module.exports = {
 
     },
     buscarAnuncioIdpublic: async (req, res) => {
-        //await database.sync();
+        //// await database.sync(); // REMOVED: sync should not run per-request
         //const nu_hash = req.params.id;
         const nu_hash = req.query.search;
         console.log(nu_hash);
@@ -3083,7 +3083,7 @@ module.exports = {
     },
     criarAnuncio: async (req, res) => {
 
-        //await database.sync();
+        //// await database.sync(); // REMOVED: sync should not run per-request
         const { codAnuncio,
             codUsuario,
             codTipoAnuncio,
@@ -3824,7 +3824,7 @@ module.exports = {
 
     },
     updateAnuncioStatus: async (req, res) => {
-        await database.sync();
+        // await database.sync(); // REMOVED: sync should not run per-request
 
         const uuid = req.params.id;
 
@@ -6704,7 +6704,7 @@ module.exports = {
                     criarAnuncioImportado(codUser);
                 } else {
 
-                    await database.sync();
+                    // await database.sync(); // REMOVED: sync should not run per-request
 
                     const dadosUsuario = {
                         "codTipoPessoa": "pf",
@@ -6968,7 +6968,7 @@ module.exports = {
                     criarAnuncioImportado(codUser);
                 } else {
 
-                    await database.sync();
+                    // await database.sync(); // REMOVED: sync should not run per-request
 
                     const dadosUsuario = {
                         "codTipoPessoa": "pf",

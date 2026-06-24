@@ -10,7 +10,7 @@ const Usuarios = require('../models/table_usuarios');
 
 module.exports = {
     login: async (req, res) => {
-        await database.sync();
+        // await database.sync(); // REMOVED: sync should not run per-request
 
         const { descCPFCNPJ, senha } = req.body;
 
@@ -73,7 +73,7 @@ module.exports = {
          res.json({success: true, data: user})
     },
     loginold: async (req, res) => {
-        await database.sync();
+        // await database.sync(); // REMOVED: sync should not run per-request
 
         const { descCPFCNPJ, senha } = req.body;
 

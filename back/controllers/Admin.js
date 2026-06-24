@@ -174,7 +174,7 @@ module.exports = {
         });
     },
     updateUserStatus: async (req, res) => {
-        await database.sync();
+        // await database.sync(); // REMOVED: sync should not run per-request
 
         const uuid = req.params.id;
 
@@ -881,7 +881,7 @@ module.exports = {
 
     },
     listarCadernoId: async (req, res) => {
-        await database.sync();
+        // await database.sync(); // REMOVED: sync should not run per-request
 
         const uuid = req.params.id;
 
@@ -1709,7 +1709,7 @@ WHERE anuncio.codUf = :estado AND anuncio.codCaderno = :caderno;
 
     },
     buscarDDD: async (req, res) => {
-        await database.sync();
+        // await database.sync(); // REMOVED: sync should not run per-request
 
         const codUf = req.params.id;
 
@@ -1968,7 +1968,7 @@ WHERE anuncio.codUf = :estado AND anuncio.codCaderno = :caderno;
 
     },
     criarPin: async (req, res) => {
-        await database.sync();
+        // await database.sync(); // REMOVED: sync should not run per-request
 
         try {
             const pin = await Pin.create(req.body);
@@ -2081,7 +2081,7 @@ WHERE anuncio.codUf = :estado AND anuncio.codCaderno = :caderno;
     },
     criarCalhau: async (req, res) => {
         console.log(req.body)
-        await database.sync();
+        // await database.sync(); // REMOVED: sync should not run per-request
 
         try {
             const novoCalhau = await Calhau.create(req.body);

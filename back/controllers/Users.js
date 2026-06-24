@@ -16,7 +16,7 @@ const bcrypt = require('bcryptjs');
 
 module.exports = {
     create: async (req, res) => {
-        await database.sync();
+        // await database.sync(); // REMOVED: sync should not run per-request
 
         const { TipoPessoa,
             CPFCNPJ,
@@ -120,7 +120,7 @@ module.exports = {
 
     },
     update: async (req, res) => {
-        await database.sync();
+        // await database.sync(); // REMOVED: sync should not run per-request
 
         const uuid = req.params.id;
         const doc = req.query.doc;
@@ -210,7 +210,7 @@ module.exports = {
 
     },
     updateStatus: async (req, res) => {
-        await database.sync();
+        // await database.sync(); // REMOVED: sync should not run per-request
 
         const uuid = req.params.id;
 
@@ -257,7 +257,7 @@ module.exports = {
 
     },
     delete: async (req, res) => {
-        await database.sync();
+        // await database.sync(); // REMOVED: sync should not run per-request
 
         const uuid = req.params.id;
 
@@ -287,7 +287,7 @@ module.exports = {
 
     },
     buscarUsuario: async (req, res) => {
-        await database.sync();
+        // await database.sync(); // REMOVED: sync should not run per-request
 
         const uuid = req.params.id;
 
@@ -303,7 +303,7 @@ module.exports = {
         res.json(resultAnuncio[0]);
     },
     criarAnuncio: async (req, res) => {
-        await database.sync();
+        // await database.sync(); // REMOVED: sync should not run per-request
 
         const { codAnuncio,
             codUsuario,

@@ -36,10 +36,10 @@ const sequelize = new Sequelize(dbConfig.database, dbConfig.username, dbConfig.p
         charset: 'utf8mb4',
     },
     pool: {
-        max: 10,
+        max: 20,
         min: 2,
-        acquire: 30000,
-        idle: 10000,
+        acquire: 120000,
+        idle: 30000,
     },
 });
 
