@@ -10,6 +10,40 @@ import Swal from 'sweetalert2';
 import Header from "../Header";
 import Spinner from '../../../components/Spinner';
 
+const validateCPF = (cpf) => {
+    cpf = cpf.replace(/[^\d]+/g, '');
+    if (cpf.length !== 11 || /^(\d)\1{10}$/.test(cpf)) return false;
+    let sum = 0;
+    for (let i = 0; i < 9; i++) sum += parseInt(cpf.charAt(i)) * (10 - i);
+    let remainder = 11 - (sum % 11);
+    if (remainder === 10 || remainder === 11) remainder = 0;
+    if (remainder !== parseInt(cpf.charAt(9))) return false;
+    sum = 0;
+    for (let i = 0; i < 10; i++) sum += parseInt(cpf.charAt(i)) * (11 - i);
+    remainder = 11 - (sum % 11);
+    if (remainder === 10 || remainder === 11) remainder = 0;
+    return remainder === parseInt(cpf.charAt(10));
+};
+
+const validateCNPJ = (cnpj) => {
+    cnpj = cnpj.replace(/[^\d]+/g, '');
+    if (cnpj.length !== 14 || /^(\d)\1{13}$/.test(cnpj)) return false;
+    const w1 = [5,4,3,2,9,8,7,6,5,4,3,2];
+    const w2 = [6,5,4,3,2,9,8,7,6,5,4,3,2];
+    let sum = 0;
+    for (let i = 0; i < 12; i++) sum += parseInt(cnpj.charAt(i)) * w1[i];
+    let r = sum % 11;
+    if (parseInt(cnpj.charAt(12)) !== (r < 2 ? 0 : 11 - r)) return false;
+    sum = 0;
+    for (let i = 0; i < 13; i++) sum += parseInt(cnpj.charAt(i)) * w2[i];
+    r = sum % 11;
+    return parseInt(cnpj.charAt(13)) === (r < 2 ? 0 : 11 - r);
+};
+
+const validateEmail = (email) => {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) && email.length <= 254;
+};
+
 const FormCadastro = () => {
 
     const [usuarios, setUsuarios] = useState([]);
@@ -61,6 +95,11 @@ const FormCadastro = () => {
         setShowSpinner(true);
         var validation = false;
 
+        const tipoPessoa = document.getElementById('codTipoPessoa').value;
+        const cpfcnpj = document.getElementById('nu_doc').value;
+        const nome = document.getElementById('nome').value;
+        const email = document.getElementById('email').value;
+
         document.querySelectorAll('[name="pwd"]').forEach((item) => {
             if (item.value === "") {
                 item.style.border = "1px solid red";
@@ -82,6 +121,33 @@ const FormCadastro = () => {
                 validation = true;
             };
         });
+
+        if (!nome || nome.length < 2) {
+            Swal.fire({ icon: 'error', title: 'Nome inválido', text: 'O nome deve ter pelo menos 2 caracteres' });
+            setShowSpinner(false);
+            return;
+        }
+
+        if (!validateEmail(email)) {
+            Swal.fire({ icon: 'error', title: 'E-mail inválido', text: 'Digite um e-mail válido' });
+            setShowSpinner(false);
+            return;
+        }
+
+        const docClean = cpfcnpj.replace(/[^\d]/g, '');
+        if (tipoPessoa === 'F') {
+            if (!validateCPF(docClean)) {
+                Swal.fire({ icon: 'error', title: 'CPF inválido', text: 'Digite um CPF válido' });
+                setShowSpinner(false);
+                return;
+            }
+        } else if (tipoPessoa === 'J') {
+            if (!validateCNPJ(docClean)) {
+                Swal.fire({ icon: 'error', title: 'CNPJ inválido', text: 'Digite um CNPJ válido' });
+                setShowSpinner(false);
+                return;
+            }
+        }
 
         const data = {
             "TipoPessoa": document.getElementById('codTipoPessoa').value,

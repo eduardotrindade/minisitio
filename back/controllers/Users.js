@@ -12,6 +12,7 @@ const { Op } = Sequelize;
 const { novoUsuario } = require('../functions/sendMailer');
 const Usuario = require('../models/table_usuarios');
 const bcrypt = require('bcryptjs');
+const { validateCPF, validateCNPJ, validateEmail, identifyDocument } = require('../validations');
 
 
 module.exports = {
@@ -41,10 +42,20 @@ module.exports = {
         if (!CPFCNPJ || typeof CPFCNPJ !== 'string' || CPFCNPJ.length > 20) {
             return res.status(400).json({ success: false, message: "CPF/CNPJ inválido" });
         }
+        const docType = identifyDocument(CPFCNPJ);
+        if (docType === 'Invalid') {
+            return res.status(400).json({ success: false, message: "CPF/CNPJ com formato inválido" });
+        }
+        if (docType === 'CPF' && !validateCPF(CPFCNPJ)) {
+            return res.status(400).json({ success: false, message: "CPF inválido" });
+        }
+        if (docType === 'CNPJ' && !validateCNPJ(CPFCNPJ)) {
+            return res.status(400).json({ success: false, message: "CNPJ inválido" });
+        }
         if (!Nome || typeof Nome !== 'string' || Nome.length > 255 || Nome.length < 2) {
             return res.status(400).json({ success: false, message: "Nome inválido (2-255 caracteres)" });
         }
-        if (!Email || typeof Email !== 'string' || !Email.includes('@') || Email.length > 254) {
+        if (!Email || !validateEmail(Email)) {
             return res.status(400).json({ success: false, message: "E-mail inválido" });
         }
         if (!TipoPessoa || !['F', 'J'].includes(TipoPessoa)) {

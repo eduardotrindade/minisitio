@@ -4,6 +4,7 @@ const key = require('../config/config.js');
 const secretKey = key.apiSecret;
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
+const { validateCPF, validateCNPJ, identifyDocument } = require('../validations');
 
 //model
 const Usuarios = require('../models/table_usuarios');
@@ -20,6 +21,17 @@ module.exports = {
 
         if (typeof descCPFCNPJ !== 'string' || descCPFCNPJ.length > 20) {
             return res.status(400).json({ success: false, message: "CPF/CNPJ inválido" });
+        }
+
+        const docType = identifyDocument(descCPFCNPJ);
+        if (docType === 'Invalid') {
+            return res.status(400).json({ success: false, message: "CPF/CNPJ com formato inválido" });
+        }
+        if (docType === 'CPF' && !validateCPF(descCPFCNPJ)) {
+            return res.status(400).json({ success: false, message: "CPF inválido" });
+        }
+        if (docType === 'CNPJ' && !validateCNPJ(descCPFCNPJ)) {
+            return res.status(400).json({ success: false, message: "CNPJ inválido" });
         }
 
         if (typeof senha !== 'string' || senha.length > 128) {

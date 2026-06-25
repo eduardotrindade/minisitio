@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { masterPath } from '../../../config/config';
 import he from 'he';
+import Swal from 'sweetalert2';
 
 
 
@@ -229,6 +230,10 @@ function ComprarAnuncio() {
 
         var validation = true;
 
+        const validateEmail = (email) => {
+            if (!email) return true;
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) && email.length <= 254;
+        };
 
         document.querySelectorAll('[required]').forEach((item) => {
             if (item.value === "") {
@@ -238,12 +243,27 @@ function ComprarAnuncio() {
             } else {
                 item.style.border = "1px solid gray";
                 validation = true;
-
             };
         });
 
         const formData = new FormData(e.target);
         const formValues = Object.fromEntries(formData.entries());
+
+        if (formValues.descEmailComercial && !validateEmail(formValues.descEmailComercial)) {
+            Swal.fire({ icon: 'error', title: 'E-mail comercial inválido', text: 'Digite um e-mail válido' });
+            setShowSpinner(false);
+            return;
+        }
+        if (formValues.descEmailRetorno && !validateEmail(formValues.descEmailRetorno)) {
+            Swal.fire({ icon: 'error', title: 'E-mail de retorno inválido', text: 'Digite um e-mail válido' });
+            setShowSpinner(false);
+            return;
+        }
+        if (formValues.descEmailAutorizante && !validateEmail(formValues.descEmailAutorizante)) {
+            Swal.fire({ icon: 'error', title: 'E-mail do autorizante inválido', text: 'Digite um e-mail válido' });
+            setShowSpinner(false);
+            return;
+        }
 
         console.log(formValues);
 
