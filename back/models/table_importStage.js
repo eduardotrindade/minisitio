@@ -538,48 +538,46 @@ const ImportStage = database.define('importStage', {
     {
         freezeTableName: true,
         timestamps: true,
-    },
-    {
         indexes: [
             {
                 name: 'idx_descCPFCNPJ',
-                fields: ['descCPFCNPJ'], // O campo para o qual o índice será criado
+                fields: ['descCPFCNPJ'],
             },
             {
                 name: 'idx_descAnuncio',
-                fields: ['descAnuncio'], // O campo para o qual o índice será criado
+                fields: ['descAnuncio'],
             },
             {
                 name: 'idx_descTelefone',
-                fields: ['descTelefone'], // O campo para o qual o índice será criado
+                fields: ['descTelefone'],
             },
             {
                 name: 'idx_tags',
-                fields: ['descTelefone'], // O campo para o qual o índice será criado
+                fields: ['descTelefone'],
             },
             {
                 name: 'idx_codUf',
-                fields: ['codUf'], // O campo para o qual o índice será criado
+                fields: ['codUf'],
             },
             {
                 name: 'idx_codCaderno',
-                fields: ['codCaderno'], // O campo para o qual o índice será criado
+                fields: ['codCaderno'],
             },
             {
                 name: 'idx_codDesconto',
-                fields: ['codDesconto'], // O campo para o qual o índice será criado
+                fields: ['codDesconto'],
             },
             {
                 name: 'idx_activate',
-                fields: ['activate'], // O campo para o qual o índice será criado
+                fields: ['activate'],
             },
             {
                 name: 'idx_createdAt',
-                fields: ['createdAt'], // O campo para o qual o índice será criado
+                fields: ['createdAt'],
             },
             {
-                name: 'idx_codDuplicado ',
-                fields: ['codDuplicado '], // O campo para o qual o índice será criado
+                name: 'idx_codDuplicado',
+                fields: ['codDuplicado'],
             },
         ]
     });

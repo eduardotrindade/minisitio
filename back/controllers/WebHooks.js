@@ -210,7 +210,7 @@ async function novoRegistrarPagamento(data) {
 
         try {
             const atualizarPagamento = await Pagamento.update({
-                status: res.status,
+                status: data.payments.status,
                 data: Date.now()
             }, {
                 where: {
@@ -220,7 +220,7 @@ async function novoRegistrarPagamento(data) {
             })
             console.log(atualizarPagamento)
 
-            if (res.status == "approved") {
+            if (data.payments.status == "approved") {
                 const perfil = await Anuncio.findOne({
                     where: {
                         codAnuncio: codigoReferenciaMp

@@ -1,12 +1,6 @@
 const fs = require('fs');
 
 //streams
-const express = require('express');
-const app = express();
-const http = require("http");
-const { Server } = require("socket.io");
-const server = http.createServer(app);
-const io = new Server(server);
 const ExcelJS = require('exceljs');
 const masterPath = require('../../../config/config');
 const moment = require('moment');

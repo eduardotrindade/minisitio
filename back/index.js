@@ -392,24 +392,31 @@ app.post('/api/admin/anuncio/import/:socketId', saveImport().single('uploadedfil
         async function processFile() {
             console.log("Iniciando leitura do arquivo...");
             let index = 1;
+            let importError = false;
             const stream = fs.createReadStream(arquivoImportado).pipe(csv({
                 separator: ';',
                 quote: '"',
             }));
 
             for await (const row of stream) {
-
+                if (importError) break;
 
                 let codigoDeDesconto = await Descontos.findOne({ where: { hash: row["ID"] } });
 
                 if (!codigoDeDesconto) {
                     console.log(`Processando linha ${row['ID']}:`);
-                    return res.status(404).json({ success: false, message: "O codigo de ID não foi encontrado. Por favor insira um ID válido no arquivo ou gere um novo ID e tente novamente." });
+                    importError = true;
+                    if (!res.headersSent) {
+                        return res.status(404).json({ success: false, message: "O codigo de ID não foi encontrado. Por favor insira um ID válido no arquivo ou gere um novo ID e tente novamente." });
+                    }
+                    break;
                 }
                 await processRow(row, index);
                 await new Promise(resolve => setTimeout(resolve, DELAY_MS));
                 index++;
             }
+
+            if (importError) return;
 
             console.log("Arquivo lido com sucesso!");
             res.json({ success: true, message: "Importação" });
@@ -501,9 +508,12 @@ app.post('/api/admin/anuncio/import/:socketId', saveImport().single('uploadedfil
 
     // Para rodar a importação, basta chamar:
     try {
-        importarPerfis();
+        await importarPerfis();
     } catch (err) {
         console.error("Erro ao importar perfis:", err);
+        if (!res.headersSent) {
+            return res.status(500).json({ success: false, message: "Erro ao importar perfis" });
+        }
     }
 
 

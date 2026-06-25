@@ -1,12 +1,6 @@
 const fs = require('fs');
 
 //streams
-const express = require('express');
-const app = express();
-const http = require("http");
-const { Server } = require("socket.io");
-const server = http.createServer(app);
-const io = new Server(server);
 const ExcelJS = require('exceljs');
 const masterPath = require('../config/config');
 const moment = require('moment');
@@ -666,12 +660,15 @@ module.exports = {
    */
     },
     listarCadernosPortal: async (req, res) => {
+        const porPagina = parseInt(req.query.porPagina) || 50;
+        const pagina = parseInt(req.query.pagina) || 1;
+        const offset = (pagina - 1) * porPagina;
+
         const anuncios = await Cadernos.findAll({
             order: [
-                ['UF', 'ASC'], // Ordena pelo campo 'name' em ordem ascendente (alfabética)
+                ['UF', 'ASC'],
                 [Sequelize.literal('isCapital ASC')],
                 ['nomeCaderno', 'ASC']
-
             ],
             limit: porPagina,
             offset: offset,

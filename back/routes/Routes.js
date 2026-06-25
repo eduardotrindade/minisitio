@@ -1,5 +1,4 @@
 const express = require('express');
-const router = express.Router();
 const multer = require('multer');
 const path = require('path');
 
@@ -437,7 +436,7 @@ module.exports = (io, loginLimiter) => {
             return;
         }
 
-        const anuncio = await Anuncio.findAll({
+        const anuncio = await Anuncio.findOne({
             where: {
                 codAnuncio: req.body.id
             }
@@ -445,7 +444,7 @@ module.exports = (io, loginLimiter) => {
 
         const filename = req.file ? req.file.filename : false
 
-        const emailReturn = await faleComDono(req.body, anuncio.descEmailAutorizante, filename);
+        const emailReturn = await faleComDono(req.body, anuncio ? anuncio.descEmailAutorizante : null, filename);
         //faleComDonoCliente(req.body);
         if (emailReturn) {
             res.json({ success: true, message: "email enviado" });
