@@ -545,8 +545,8 @@ module.exports = (io, loginLimiter) => {
     (async () => {
         try {
             await new Promise(r => setTimeout(r, 5000));
-            const descDir = path.join(__dirname, 'public/upload/img/descImagem');
-            const mosDir = path.join(__dirname, 'public/upload/img/mosaico');
+            const descDir = path.join(__dirname, '../public/upload/img/descImagem');
+            const mosDir = path.join(__dirname, '../public/upload/img/mosaico');
             const descFiles = fs2.readdirSync(descDir);
             const mosFiles = fs2.readdirSync(mosDir);
             const [anuncios] = await db.query(`SELECT a.codAnuncio, a.descImagem, a.codCaderno, c.nomeCaderno, c.UF FROM anuncio a LEFT JOIN caderno c ON a.codCaderno = c.codCaderno WHERE a.descImagem IS NOT NULL AND a.descImagem != '' AND a.descImagem != '0'`);
