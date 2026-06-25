@@ -1933,36 +1933,33 @@ WHERE anuncio.codUf = :estado AND anuncio.codCaderno = :caderno;
 
     //MODULO PIN
     listarPin: async (req, res) => {
+        try {
+            const paginaAtual = req.query.page ? parseInt(req.query.page) : 1;
+            const porPagina = 10;
 
-        const paginaAtual = req.query.page ? parseInt(req.query.page) : 1; // Página atual, padrão: 1
-        const porPagina = 10; // Número de itens por página
-        const codigoCaderno = req.params.codCaderno;
+            const offset = (paginaAtual - 1) * porPagina;
 
-        const offset = (paginaAtual - 1) * porPagina;
+            const pins = await Pin.findAndCountAll({
+                order: [['createdAt', 'DESC']],
+                limit: porPagina,
+                offset: offset
+            });
 
-        // Consulta para recuperar apenas os itens da página atual
-        const pins = await Pin.findAndCountAll({
-            order: [['createdAt', 'DESC']],
-            limit: porPagina,
-            offset: offset
-        });
+            const totalItens = pins.count;
+            const totalPaginas = Math.ceil(totalItens / porPagina);
 
-        // Número total de itens
-        const totalItens = pins.count;
-        // Número total de páginas
-        const totalPaginas = Math.ceil(totalItens / porPagina);
-
-        res.json({
-            success: true, message: {
-                pins: pins.rows, // Itens da página atual
-                paginaAtual: paginaAtual,
-                totalPaginas: totalPaginas,
-                totalItens: totalItens
-            }
-        })
-
-        //res.json({success: true, data: pin});
-
+            res.json({
+                success: true, message: {
+                    pins: pins.rows,
+                    paginaAtual: paginaAtual,
+                    totalPaginas: totalPaginas,
+                    totalItens: totalItens
+                }
+            })
+        } catch (error) {
+            console.error('Erro ao listar pins:', error.message);
+            res.json({ success: false, message: 'Módulo PIN indisponível', data: { pins: [], paginaAtual: 1, totalPaginas: 0, totalItens: 0 } });
+        }
     },
     criarPin: async (req, res) => {
         // await database.sync(); // REMOVED: sync should not run per-request
@@ -1978,69 +1975,66 @@ WHERE anuncio.codUf = :estado AND anuncio.codCaderno = :caderno;
 
     },
     atualizarPin: async (req, res) => {
-        let id = req.query.id;
-
-        const pin = await Pin.update(req.body, {
-            where: {
-                id: id
-            }
-        });
-
-        res.json({ success: true, data: pin });
-
+        try {
+            let id = req.query.id;
+            const pin = await Pin.update(req.body, {
+                where: { id: id }
+            });
+            res.json({ success: true, data: pin });
+        } catch (error) {
+            console.error('Erro ao atualizar pin:', error.message);
+            res.json({ success: false, message: 'Erro ao atualizar pin' });
+        }
     },
     deletarPin: async (req, res) => {
-        let id = req.params.id;
-
-        const pin = await Pin.destroy({
-            where: {
-                id: id
-            }
-        });
-
-        res.json({ success: true, data: pin });
-
+        try {
+            let id = req.params.id;
+            const pin = await Pin.destroy({
+                where: { id: id }
+            });
+            res.json({ success: true, data: pin });
+        } catch (error) {
+            console.error('Erro ao deletar pin:', error.message);
+            res.json({ success: false, message: 'Erro ao deletar pin' });
+        }
     },
     listarPinId: async (req, res) => {
+        try {
+            const uuid = req.params.id;
+            const pin = await Pin.findAll({
+                where: { id: uuid }
+            });
 
-        const uuid = req.params.id;
-        console.log(uuid)
-        //Anuncios
-        const pin = await Pin.findAll({
-            where: {
-                id: uuid
+            if (pin.length === 0) {
+                return res.status(404).json({ message: 'Anúncio não encontrado' });
             }
-        });
 
-        // Verifica se o resultado está vazio
-        if (pin.length === 0) {
-            return res.status(404).json({ message: 'Anúncio não encontrado' });
+            res.json({ success: true, data: pin });
+        } catch (error) {
+            console.error('Erro ao buscar pin:', error.message);
+            res.json({ success: false, message: 'Erro ao buscar pin' });
         }
-
-
-        res.json({ success: true, data: pin });
     },
     listarPinPortal: async (req, res) => {
+        try {
+            const pin = await Pin.findOne({ order: [['createdAt', 'DESC']] });
 
+            if (!pin) {
+                return res.status(404).json({ message: 'Pin não encontrado' });
+            }
 
-        const pin = await Pin.findOne({ order: [['createdAt', 'DESC']] });
+            let hoje = moment();
+            let validade = moment(pin.validade, "DD/MM/YYYY");
 
-        // Verifica se o resultado está vazio
-        if (!pin) {
-            return res.status(404).json({ message: 'Pin não encontrado' });
+            if (hoje.isBefore(validade)) {
+                res.json({ success: true, pin: pin });
+            } else {
+                res.json({ success: false, message: "pin vencido" });
+            }
+        } catch (error) {
+            console.error('Erro ao buscar pin:', error.message);
+            res.json({ success: false, message: "pin não disponível" });
         }
-
-        let hoje = moment();
-        let validade = moment(pin.validade, "DD/MM/YYYY");
-        console.log(hoje.isBefore(validade), pin.validade)
-
-        if (hoje.isBefore(validade)) {
-            res.json({ success: true, pin: pin });
-        } else {
-            res.json({ success: false, message: "pin vencido" });
-        }
-
-
     },
 
     //MODULO CALHAU

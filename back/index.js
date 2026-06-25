@@ -1,5 +1,15 @@
 require('dotenv').config();
 
+// Prevent unhandled promise rejections from crashing the process
+process.on('unhandledRejection', (reason, promise) => {
+    console.error('Unhandled Rejection:', reason && reason.message ? reason.message : reason);
+});
+
+// Prevent uncaught exceptions from crashing the process
+process.on('uncaughtException', (err) => {
+    console.error('Uncaught Exception:', err.message);
+});
+
 const express = require('express');
 const app = express();
 app.set('trust proxy', 1);
