@@ -432,7 +432,7 @@ module.exports = {
             const countQuery = `
                 SELECT COUNT(*) as total
                 FROM anuncio a
-                LEFT JOIN atividade atv ON a.codAtividade = atv.atividade
+                LEFT JOIN atividade atv ON a.codAtividade = atv.id
                 WHERE ${whereClause}
             `;
 
@@ -446,7 +446,7 @@ module.exports = {
                     c.nomeCaderno AS cidade,
                     c.UF AS estado
                 FROM anuncio a
-                LEFT JOIN atividade atv ON a.codAtividade = atv.atividade
+                LEFT JOIN atividade atv ON a.codAtividade = atv.id
                 LEFT JOIN caderno c ON a.codCaderno = c.codCaderno
                 WHERE ${whereClause}
                 ORDER BY atv.nomeAmigavel ASC, a.descAnuncio ASC
