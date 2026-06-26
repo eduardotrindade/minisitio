@@ -28,7 +28,9 @@ export default function BuscarProfissionais() {
 
     useEffect(() => {
         if (filtroUf) {
-            fetch(`${masterPath.url}/cadernos?uf=${filtroUf}`)
+            const ufObj = ufs.find(u => String(u.id_uf) === String(filtroUf));
+            const sigla = ufObj ? ufObj.sigla_uf : filtroUf;
+            fetch(`${masterPath.url}/cadernos?uf=${sigla}`)
                 .then(x => x.json())
                 .then(res => setCidades(res.data || res))
                 .catch(err => console.error('Erro ao buscar cidades:', err));
@@ -204,6 +206,9 @@ export default function BuscarProfissionais() {
                                                         <span className="badge bg-secondary">
                                                             {item.profissao || 'Não informado'}
                                                         </span>
+                                                        {item.codCnae && (
+                                                            <><br/><small className="text-muted">CNAE: {item.codCnae}</small></>
+                                                        )}
                                                     </td>
                                                     <td>{item.cidade}/{item.estado}</td>
                                                     <td>{item.descTelefone || item.descCelular}</td>

@@ -438,15 +438,16 @@ module.exports = {
 
             const dataQuery = `
                 SELECT 
-                    a.codAnuncio, a.descAnuncio, a.descEndereco, a.descTelefone,
+                    a.codAnuncio, a.descAnuncio, a.descTelefone,
                     a.descCelular, a.descImagem, a.codAtividade, a.codCaderno, a.codUf,
                     a.descCPFCNPJ, a.descEmailComercial, a.createdAt,
+                    atv.atividade AS codCnae,
                     atv.nomeAmigavel AS profissao,
                     c.nomeCaderno AS cidade,
                     c.UF AS estado
                 FROM anuncio a
                 LEFT JOIN atividade atv ON a.codAtividade = atv.atividade
-                LEFT JOIN caderno c ON a.codCaderno = c.nomeCaderno
+                LEFT JOIN caderno c ON a.codCaderno = c.codCaderno
                 WHERE ${whereClause}
                 ORDER BY atv.nomeAmigavel ASC, a.descAnuncio ASC
                 LIMIT :limit OFFSET :offset
