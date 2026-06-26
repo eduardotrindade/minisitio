@@ -152,7 +152,7 @@ function Caderno(props) {
     fetch(`${masterPath.url}/admin/lista/test/${caderno}/${estado}`)
       .then((x) => x.json())
       .then((res) => {
-        setClassificados(res.data);
+        setClassificados(res.data || []);
         setLoading(false);
         const cadernoEl = document.querySelector('.caderno');
         if (cadernoEl) cadernoEl.style.filter = "none";

@@ -640,7 +640,36 @@ async function seedAdmin() {
     }
 }
 
+async function seedPin() {
+    try {
+        const database = require('./config/db');
+        await database.query(`
+            CREATE TABLE IF NOT EXISTS pin (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                codigo VARCHAR(255) NOT NULL UNIQUE,
+                validade TEXT NOT NULL
+            )
+        `);
+        const Pin = require('./models/table_pin');
+        const [pin, created] = await Pin.findOrCreate({
+            where: { codigo: '61984213444' },
+            defaults: {
+                codigo: '61984213444',
+                validade: '31/12/2030'
+            }
+        });
+        if (created) {
+            console.log('SEED: PIN criado: 61984213444');
+        } else {
+            console.log('SEED: PIN ja existe: 61984213444');
+        }
+    } catch (err) {
+        console.error('SEED PIN: Erro:', err.message);
+    }
+}
+
 server.listen(port, async () => {
     console.log("rodando na porta: ", port);
     await seedAdmin();
+    await seedPin();
 });

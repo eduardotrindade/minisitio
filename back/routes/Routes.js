@@ -98,7 +98,7 @@ module.exports = (io, loginLimiter) => {
     router.delete('/api/admin/desconto/delete/:id', auth, Admin.deleteIds);
     router.get('/api/admin/desconto/buscar/:id', auth, Admin.buscarId);
     router.get('/api/admin/desconto/aplicar/:id', auth, Admin.aplicarDesconto);
-    router.get('/api/admin/desconto/read/all', auth, Admin.buscarAllId);
+    router.get('/api/admin/desconto/read/all', Admin.buscarAllId);
     router.get('/api/admin/desconto/usuario/buscar/:id', auth, Admin.buscarUsuarioId);
     router.get('/api/admin/desconto/ddd/:id', auth, Admin.buscarDDD);
     router.post('/api/admin/desconto/export', auth, Admin.exportID);
@@ -168,7 +168,7 @@ module.exports = (io, loginLimiter) => {
     router.get('/api/admin/anuncio/classificado/geral2', EspacosController.listarClassificadoGeral2);
     router.get('/api/admin/anuncio/classificado/especifico/:caderno/:uf', EspacosController.listarClassificadoEspecifico);
     router.get('/api/admin/anuncio/quantidade/uf', auth, EspacosController.quantidadeUf);
-    router.get('/api/admin/lista/test/:caderno/:uf', auth, EspacosController.listaTeste);
+    router.get('/api/admin/lista/test/:caderno/:uf', EspacosController.listaTeste);
     router.get('/api/admin/import/stage', auth, EspacosController.importStage);
     router.get('/api/admin/import/stage/finalizar', auth, EspacosController.finalizarImportStage);
 
