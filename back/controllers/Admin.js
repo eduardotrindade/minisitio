@@ -68,12 +68,10 @@ module.exports = {
             limit: porPagina,
             offset: offset,
             attributes: [
-                //[Sequelize.literal('DISTINCT `descCPFCNPJ`'), 'descCPFCNPJ'],
                 'codUsuario',
-                'descCPFCNPJ', // Aplique DISTINCT diretamente aqui
+                'descCPFCNPJ',
                 'descNome',
                 'descEmail',
-                'senha',
                 'codTipoUsuario',
                 'codUf',
                 'codCidade',
@@ -130,12 +128,10 @@ module.exports = {
             limit: porPagina,
             offset: offset,
             attributes: [
-                //[Sequelize.literal('DISTINCT `descCPFCNPJ`'), 'descCPFCNPJ'],
                 'codUsuario',
-                'descCPFCNPJ', // Aplique DISTINCT diretamente aqui
+                'descCPFCNPJ',
                 'descNome',
                 'descEmail',
-                'senha',
                 'codTipoUsuario',
                 'codUf',
                 'codCidade',
@@ -209,13 +205,11 @@ module.exports = {
                     [requisito]: nu_doc
                 },
                 attributes: [
-                    //[Sequelize.literal('DISTINCT `descCPFCNPJ`'), 'descCPFCNPJ'],
                     'codUsuario',
                     'codTipoPessoa',
-                    'descCPFCNPJ', // Aplique DISTINCT diretamente aqui
+                    'descCPFCNPJ',
                     'descNome',
                     'descEmail',
-                    'senha',
                     'codTipoUsuario',
                     'codUf',
                     'codCidade',
@@ -243,7 +237,6 @@ module.exports = {
                     { header: 'descCPFCNPJ', key: 'doc', width: 10 },
                     { header: 'descNome', key: 'nome', width: 10 },
                     { header: 'descEmail', key: 'email', width: 10 },
-                    { header: 'senha', key: 'senha', width: 10 },
                     { header: 'codTipoUsuario', key: 'tipoUser', width: 10 },
                     { header: 'codUf', key: 'uf', width: 10 },
                     { header: 'codCidade', key: 'cidade', width: 10 },

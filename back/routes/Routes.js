@@ -43,9 +43,6 @@ const database = require('../config/db.js');
 module.exports = (io, loginLimiter) => {
     const router = express.Router();
     router.use(function timelog(req, res, next) {
-        //auth();
-        //res.setHeader('Content-Type', 'application/json; charset=utf-8');
-        console.log('Time: ', Date.now(), req.path);
         next();
     });
 
@@ -61,7 +58,7 @@ module.exports = (io, loginLimiter) => {
     router.post('/api/anuncios/:codCaderno', Buscador.buscaGeralCaderno);
     router.get('/api/atividade/:codAtividade', Buscador.buscaAtividade);
     router.get('/api/anuncio/:codAnuncio', Buscador.buscaAnuncio);
-    router.get('/api/admin/usuario', Admin.listarUsuarios);
+    router.get('/api/admin/usuario', auth, Admin.listarUsuarios);
 
     //Login
     router.post('/api/entrar', loginLimiter, Login.login);
@@ -134,9 +131,9 @@ module.exports = (io, loginLimiter) => {
     router.get('/api/admin/anuncio/classificado/geral2', EspacosController.listarClassificadoGeral2);
     router.get('/api/admin/anuncio/classificado/especifico/:caderno/:uf', EspacosController.listarClassificadoEspecifico);
     router.get('/api/admin/anuncio/quantidade/uf', auth, EspacosController.quantidadeUf);
-    router.get('/api/admin/lista/test/:caderno/:uf', EspacosController.listaTeste);
-    router.get('/api/admin/import/stage', EspacosController.importStage);
-    router.get('/api/admin/import/stage/finalizar', EspacosController.finalizarImportStage);
+    router.get('/api/admin/lista/test/:caderno/:uf', auth, EspacosController.listaTeste);
+    router.get('/api/admin/import/stage', auth, EspacosController.importStage);
+    router.get('/api/admin/import/stage/finalizar', auth, EspacosController.finalizarImportStage);
 
     //DASHBOARD - Leitura do cache (instantanea)
     router.get('/api/admin/dashboard', auth, async (req, res) => {

@@ -559,6 +559,18 @@ const Anuncio = database.define('anuncio', {
                 name: 'idx_codDuplicado',
                 fields: ['codDuplicado'],
             },
+            {
+                name: 'idx_uf_caderno_activate',
+                fields: ['codUf', 'codCaderno', 'activate'],
+            },
+            {
+                name: 'idx_caderno_atividade',
+                fields: ['codCaderno', 'codAtividade'],
+            },
+            {
+                name: 'idx_codUsuario',
+                fields: ['codUsuario'],
+            },
         ]
     });
 

@@ -185,98 +185,9 @@ module.exports = {
         }
 
         return;
-
-        const verificarAtividade = await Atividade.findOne({
-            where: {
-                atividade: { [Op.like]: `${atividade}` }
-            },
-            raw: true
-        });
-
-
-        if (verificarAtividade) {
-            const anuncios = await Anuncio.findAll({
-                where: {
-                    [Op.and]: [
-                        { codCaderno: codigoCaderno },
-                        { codUf: uf },
-                        {
-                            [Op.or]: [
-                                ///Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('descAnuncio')), 'LIKE', `${atividade.toLowerCase()}%`),
-                                //{ descAnuncio: { [Op.like]: `${atividade}%` } },
-                                { codAtividade: { [Op.like]: `${atividade}%` } }, //atividades.length > 0 ? atividades[0].id : "" },
-                                //{ descTelefone: atividade },
-                                //{ descCPFCNPJ: atividade },
-                                /* {
-                                    tags: {
-                                        [Op.like]: `%${atividade}%`
-                                    }
-                                } */
-                            ]
-                        }
-                    ]
-                },
-                limit: porPagina,
-                offset: offset,
-                order: [
-                    //[Sequelize.literal('CASE WHEN activate = 0 THEN 0 ELSE 1 END'), 'ASC'],
-                    ['activate', 'ASC'],
-                    ['createdAt', 'DESC'],
-                    ['codDuplicado', 'ASC'],
-                ],
-                //attributes: ['codAnuncio', 'codAtividade', 'descAnuncio']
-            });
-
-            //console.log(req.query, anuncios)
-
-            if (req.query.totalPages > 0) {
-                console.log("dasdafasdfsfasfdasfasfasdfasdfa")
-                return res.json({
-                    success: true, data: anuncios,
-                    paginaAtual: req.query.paginaAtual,
-                    totalPaginas: req.query.totalPaginas,
-                    totalItem: req.query.totalItens
-                });
-            } else {
-                const resultAnuncioCount = await Anuncio.count({
-                    where: {
-                        [Op.and]: [
-                            { codCaderno: codigoCaderno },
-                            { codUf: uf },
-                            {
-                                [Op.or]: [
-                                    ///Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('descAnuncio')), 'LIKE', `${atividade.toLowerCase()}%`),
-                                    //{ descAnuncio: { [Op.like]: `${atividade}%` } },
-                                    { codAtividade: { [Op.like]: `%${atividade}%` } }, //atividades.length > 0 ? atividades[0].id : "" },
-                                    //{ descTelefone: atividade },
-                                    //{ descCPFCNPJ: atividade },
-                                    /*  {
-                                         tags: {
-                                             [Op.like]: `%${atividade}%`
-                                         }
-                                     } */
-                                ]
-                            }
-                        ]
-                    },
-                    //attributes: ['codAnuncio']
-                });
-
-                const totalItens = resultAnuncioCount;
-                const totalPaginas = Math.ceil(totalItens / porPagina);
-
-                res.json({
-                    success: true, data: anuncios,
-                    paginaAtual: paginaAtual,
-                    totalPaginas: totalPaginas,
-                    totalItem: totalItens
-                });
-            }
-        } 
     },
     buscarCaderno: async (req, res) => {
         const uf = req.query.uf;
-        console.log("DEBUG BACKEND: UF recebida na busca de cadernos:", uf);
 
         try {
             const cadernos = await Caderno.findAll({
@@ -288,7 +199,6 @@ module.exports = {
                     ['nomeCaderno', 'ASC']
                 ],
             });
-            console.log("DEBUG BACKEND: Cidades encontradas:", cadernos.length);
             return res.json(cadernos);
         } catch (error) {
             console.log(error)
@@ -440,11 +350,10 @@ module.exports = {
         const filePath = path.join(__dirname, '../public/importLog.json');
 
         // Função para ler o arquivo JSON
-        function readJsonFile(filePath) {
+        async function readJsonFile(filePath) {
             try {
-                const jsonData = fs.readFileSync(filePath, 'utf8'); // Lê o arquivo como texto
-                const data = JSON.parse(jsonData); // Converte o texto em um objeto JavaScript
-                //console.log('Conteúdo do arquivo JSON:', data);
+                const jsonData = await fs.promises.readFile(filePath, 'utf8');
+                const data = JSON.parse(jsonData);
                 res.json({ success: true, message: data })
                 return data;
             } catch (error) {
@@ -454,7 +363,7 @@ module.exports = {
         }
 
         // Chamar a função
-        const jsonData = readJsonFile(filePath);
+        const jsonData = await readJsonFile(filePath);
 
         // Exemplo: acessar os dados do JSON
         /*      if (jsonData) {

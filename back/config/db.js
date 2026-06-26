@@ -31,7 +31,7 @@ const sequelize = new Sequelize(dbConfig.database, dbConfig.username, dbConfig.p
     host: dbConfig.host,
     port: dbConfig.port,
     timezone: '-03:00',
-    logging: isProduction ? false : console.log,
+    logging: false,
     dialectOptions: {
         charset: 'utf8mb4',
     },

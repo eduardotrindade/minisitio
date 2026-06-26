@@ -57,15 +57,14 @@ module.exports = {
 
         const token = jwt.sign({ id: user.id, role: user.codTipoUsuario, uuid: user.codUsuario, doc: user.descCPFCNPJ }, secretKey, { expiresIn: "1h" });
 
-        user.success = true;
+        const { senha: _, ...safeUser } = user;
 
-        //execLogin(req, res, users);
         if (user.ativo && user.codTipoUsuario == 1) {
-            res.json({ success: true, message: "Usuario encontrado", data: user, type: 1, accessToken: token })
+            res.json({ success: true, message: "Usuario encontrado", data: safeUser, type: 1, accessToken: token })
         } else if (user.ativo && user.codTipoUsuario == 2) {
-            res.json({ success: true, message: "Não é possível entrar com acesso MASTER", data: user, type: 2, accessToken: token })
+            res.json({ success: true, message: "Não é possível entrar com acesso MASTER", data: safeUser, type: 2, accessToken: token })
         } else if (user.ativo && user.codTipoUsuario == 3) {
-            res.json({ success: true, message: "Não é possível entrar com acesso ANUNCIANTE", data: user, type: 3, accessToken: token })
+            res.json({ success: true, message: "Não é possível entrar com acesso ANUNCIANTE", data: safeUser, type: 3, accessToken: token })
         } else if (user.ativo && user.codTipoUsuario == 5) {
             res.json({ success: true, message: "Não é possível entrar com acesso ANUNCIANTE", data: user, type: 5, accessToken: token })
         } else {
@@ -79,7 +78,7 @@ module.exports = {
                 codUsuario: req.userId
             },
             raw: true,
-            attributes: ['codUsuario', 'descNome', 'descCPFCNPJ', 'senha', 'codTipoUsuario', 'ativo']
+            attributes: ['codUsuario', 'descNome', 'descCPFCNPJ', 'codTipoUsuario', 'ativo']
         });
 
          res.json({success: true, data: user})

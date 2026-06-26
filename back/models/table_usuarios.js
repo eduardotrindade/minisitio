@@ -202,6 +202,14 @@ const Usuario = database.define('usuario', {
             {
                 name: 'idx_usuario_ordem',
                 fields: ['codCidade', 'dtCadastro', 'descNome']
+            },
+            {
+                name: 'idx_codTipoUsuario',
+                fields: ['codTipoUsuario']
+            },
+            {
+                name: 'idx_usuario_codUf',
+                fields: ['codUf']
             }
         ]
     }
