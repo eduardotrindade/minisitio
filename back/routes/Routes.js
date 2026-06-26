@@ -138,10 +138,16 @@ module.exports = (io, loginLimiter) => {
     //DASHBOARD - Leitura do cache (instantanea)
     router.get('/api/admin/dashboard', auth, async (req, res) => {
         try {
-            const [cache] = await database.query(
-                `SELECT * FROM dashboard_cache WHERE id = 1`,
-                { type: database.QueryTypes.SELECT }
-            );
+            let cache;
+            try {
+                const result = await database.query(
+                    `SELECT * FROM dashboard_cache WHERE id = 1`,
+                    { type: database.QueryTypes.SELECT }
+                );
+                cache = result[0];
+            } catch (e) {
+                cache = null;
+            }
 
             if (!cache || !cache.lastUpdated) {
                 return res.json({
@@ -184,6 +190,18 @@ module.exports = (io, loginLimiter) => {
     //DASHBOARD - Atualizar cache (queries lentas)
     router.post('/api/admin/dashboard/refresh', auth, async (req, res) => {
         try {
+            await database.query(
+                `CREATE TABLE IF NOT EXISTS dashboard_cache (
+                    id INT PRIMARY KEY DEFAULT 1,
+                    total INT DEFAULT 0, basico INT DEFAULT 0, completo INT DEFAULT 0,
+                    ativos INT DEFAULT 0, inativos INT DEFAULT 0,
+                    expirados INT DEFAULT 0, expiraEm30Dias INT DEFAULT 0,
+                    semEmail INT DEFAULT NULL, semTelefone INT DEFAULT NULL, semEmailETelefone INT DEFAULT NULL,
+                    porUf_json LONGTEXT, porMes_json LONGTEXT, cadernosPorUf_json LONGTEXT,
+                    contatos_json LONGTEXT, lastUpdated DATETIME,
+                    UNIQUE KEY idx_dashboard_cache_id (id)
+                )`
+            );
             const [stats] = await database.query(
                 `SELECT
                     COUNT(*) as total,
@@ -277,10 +295,16 @@ module.exports = (io, loginLimiter) => {
     //DASHBOARD - Ler contatos do cache
     router.get('/api/admin/dashboard/contatos', auth, async (req, res) => {
         try {
-            const [cache] = await database.query(
-                `SELECT contatos_json FROM dashboard_cache WHERE id = 1`,
-                { type: database.QueryTypes.SELECT }
-            );
+            let cache;
+            try {
+                const result = await database.query(
+                    `SELECT contatos_json FROM dashboard_cache WHERE id = 1`,
+                    { type: database.QueryTypes.SELECT }
+                );
+                cache = result[0];
+            } catch (e) {
+                cache = null;
+            }
 
             if (!cache || !cache.contatos_json) {
                 return res.json({ success: true, data: { semEmail: null, semTelefone: null, semEmailETelefone: null } });
