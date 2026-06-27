@@ -91,6 +91,8 @@ const FormCadastro = () => {
                             title: "success!",
                             text: "Código Pin atualizado!",
                             icon: "success"
+                        }).then(() => {
+                            navigate('/admin/pin');
                         })
                     } else {
                         Swal.fire({

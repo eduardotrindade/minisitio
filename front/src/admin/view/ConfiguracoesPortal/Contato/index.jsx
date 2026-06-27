@@ -30,8 +30,13 @@ function Contato() {
 
     function buscarAlteracao() {
         setShowSpinner(true);
+        const tokenAuth = sessionStorage.getItem('userTokenAccess');
 
-        fetch(`${masterPath.url}/admin/contato/read`)
+        fetch(`${masterPath.url}/admin/contato/read`, {
+            headers: {
+                'authorization': 'Bearer ' + tokenAuth
+            }
+        })
             .then((x) => x.json())
             .then((res) => {
                 if (res.success) {
@@ -45,11 +50,13 @@ function Contato() {
 
     function salvarAlteracao() {
         setSpinner2(true);
+        const tokenAuth = sessionStorage.getItem('userTokenAccess');
 
         fetch(`${masterPath.url}/admin/contato/config`, {
             method: "POST",
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'authorization': 'Bearer ' + tokenAuth
             },
             body: JSON.stringify(data)
         })

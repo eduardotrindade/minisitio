@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import Localidade from "../../components/Localidade";
 import { masterPath } from "../../config/config";
+import Swal from 'sweetalert2';
+import InputMask from 'react-input-mask';
 
 //css
 import '../../components/Modal/css/formChild.css';
@@ -128,7 +130,14 @@ const AssinanteCadastro = (props) => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(obj),
     })
-      .then((x) => x.json())
+      .then((x) => {
+        if (x.status === 409) {
+          loadingButton.current.style.display = "none";
+          setAlert(true);
+          throw new Error('duplicado');
+        }
+        return x.json();
+      })
       .then((res) => {
         if (res.success) {
 
@@ -141,7 +150,9 @@ const AssinanteCadastro = (props) => {
         } else {
           loadingButton.current.style.display = "none";
 
-          if(res.message.original.errno === 1062) {
+          if(res.message && res.message.original && res.message.original.errno === 1062) {
+            setAlert(true);
+          } else if (typeof res.message === 'string' && res.message.includes('cadastrado')) {
             setAlert(true);
           }
         }
@@ -236,7 +247,22 @@ const AssinanteCadastro = (props) => {
     }
 
     if (obj.descCPFCNPJ === "") {
-      alert("Preencha todos os campos");
+      Swal.fire({
+        icon: 'warning',
+        title: 'Campo obrigatório',
+        text: 'Por favor, preencha o CPF/CNPJ.',
+        confirmButtonColor: '#3085d6'
+      });
+      return;
+    }
+
+    if (!obj.descAnuncio || obj.descAnuncio.trim() === "") {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Campo obrigatório',
+        text: 'Por favor, preencha o nome do estabelecimento.',
+        confirmButtonColor: '#3085d6'
+      });
       return;
     }
 
@@ -375,7 +401,8 @@ const AssinanteCadastro = (props) => {
                     <div className="col-md-6 col-sm-6">
                       <div className="input-icon margin-top-10">
                         <i className="fa fa-phone"></i>
-                        <input
+                        <InputMask
+                          mask="(99) 99999-9999"
                           type="text"
                           name="descTelefone"
                           id="descTelefone"

@@ -85,7 +85,7 @@ module.exports = {
 
 
         //let option1 = perfilMinisitio.codDesconto ? ((valorBase.value / 12) - valorDesconto.desconto) * 12 : Number(valorBase.value);
-        let option1 = codDesconto ? ((valorBase.value / 12) - valorDesconto.desconto) * 12 : Number(valorBase.value);
+        let option1 = codDesconto ? ((Number(valorBase.value) / 12) - Number(valorDesconto.desconto)) * 12 : Number(valorBase.value);
 
         //console.log("valorDesconto", valorDesconto, option1);
 

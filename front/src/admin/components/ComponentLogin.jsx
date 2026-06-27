@@ -15,6 +15,7 @@ import { limparCPFouCNPJ } from '../../globalFunctions/functions';
 function Login() {
 
     const [showSpinner, setShowSpinner] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
 
     const loginValue = useRef(null);
     const passValue = useRef(null);
@@ -131,7 +132,11 @@ function Login() {
                                     <div className="col-md-12">
                                         <div className="input-icon margin-top-10 py-3">
                                             <i className="fa fa-key"></i>
-                                            <input type="password" className="form-control assinante" placeholder="Digite sua senha" id="senha" ref={passValue} onKeyDown={teclaLogin} />
+                                            <input type={showPassword ? "text" : "password"} className="form-control assinante" placeholder="Digite sua senha" id="senha" ref={passValue} onKeyDown={teclaLogin} style={{ paddingRight: '40px' }} />
+                                            <i className={`fa ${showPassword ? 'fa-eye-slash' : 'fa-eye'}`} 
+                                               onClick={() => setShowPassword(!showPassword)}
+                                               style={{ position: 'absolute', right: '15px', top: '50%', transform: 'translateY(-50%)', cursor: 'pointer', zIndex: 5 }}
+                                               title={showPassword ? 'Ocultar senha' : 'Mostrar senha'}></i>
                                         </div>
                                     </div>
                                     <div className="col-md-6 col-sm-5 senha">

@@ -233,9 +233,10 @@ function FullWebCard(props) {
                                 <div className="text-center btn-comprar border-cinza">
                                     {resultLocal.link_comprar != "" &&
                                         <a href={resultLocal.link_comprar}
-                                            className="btn proximo link-cinza d-flex justify-content-center align-items-center w-50"
+                                            className="btn d-flex justify-content-center align-items-center w-50"
                                             target="_blank"
                                             rel="noopener noreferrer"
+                                            style={{ backgroundColor: '#28a745', color: '#fff', borderColor: '#28a745' }}
                                         >Compre agora</a>
                                     }
                                     {resultLocal.link_comprar === "" &&
@@ -305,14 +306,14 @@ function FullWebCard(props) {
 
                                 {cashbackCondicoes(resultLocal.cashback_logo, resultLocal.cashback_link) === "condicao1" &&
                                     <i className='link-cinza flex justify-center border-cinza '>
-                                        <img src="../assets/img/teste/cashback.jpg" style={{ filter: "grayscale(1)", webkitFilter: "grayscale(1)" }} className='my-1' alt="cashback" width={80} />
+                                        <img src="../assets/img/teste/cashback.jpg" style={{ filter: "grayscale(1)", webkitFilter: "grayscale(1)" }} className='my-1' alt="cashback" width={100} height={40} />
                                     </i>
                                 }
 
                                 {cashbackCondicoes(resultLocal.cashback_logo, resultLocal.cashback_link) === "condicao2" &&
                                     <a href={resultLocal.cashback_link} target="_blank" rel="noopener  noreferrer">
                                         <i className='link-cinza flex justify-center border-cinza '>
-                                            <img src={`${masterPath.url}/files/logoCashBack/${resultLocal.cashback_logo}`} className='rounded my-1' alt="cashback" />
+                                            <img src={`${masterPath.url}/files/logoCashBack/${resultLocal.cashback_logo}`} className='rounded my-1' alt="cashback" style={{ maxWidth: '150px', maxHeight: '50px', objectFit: 'contain' }} />
                                         </i>
                                     </a>
 
@@ -321,7 +322,7 @@ function FullWebCard(props) {
                                 {cashbackCondicoes(resultLocal.cashback_logo, resultLocal.cashback_link) === "condicao3" &&
                                     <a href={resultLocal.cashback_link} target="_blank" rel="noopener  noreferrer">
                                         <i className='link-cinza flex justify-center border-cinza '>
-                                            <img src="../assets/img/teste/cashback.jpg" className='my-1' alt="cashback" width={80} />
+                                            <img src="../assets/img/teste/cashback.jpg" className='my-1' alt="cashback" width={100} height={40} />
                                         </i>
                                     </a>
                                 }
@@ -331,14 +332,17 @@ function FullWebCard(props) {
                                 <h2 className='titulo-cinza'>
                                     PARCEIRO
                                 </h2>
-                                <a href={resultLocal.descParceiroLink !== "0" ? resultLocal.descParceiroLink : ""} target="_blank" data-toggle="tooltip" title="parceiro" rel="noopener  noreferrer">
+                                {resultLocal.descParceiro && resultLocal.descParceiro !== "0" && resultLocal.descParceiro !== "teste" ? (
+                                    <a href={resultLocal.descParceiroLink && resultLocal.descParceiroLink !== "0" ? resultLocal.descParceiroLink : "#"} target="_blank" data-toggle="tooltip" title="parceiro" rel="noopener  noreferrer">
+                                        <i className='link-cinza flex justify-center border-cinza'>
+                                            <img src={`${masterPath.url}/files/logoParceiro/${resultLocal.descParceiro}`} width={150} height={58} className='rounded my-1' alt="parceiro" />
+                                        </i>
+                                    </a>
+                                ) : (
                                     <i className='link-cinza flex justify-center border-cinza'>
-                                        {resultLocal.descParceiro != null ?
-                                            <img src={`${masterPath.url}/files/logoParceiro/${resultLocal.descParceiro}`} width={150} height={58} className='rounded my-1' alt="parceiro" /> : <img alt="" src="../assets/img/teste/aperto-de-mao.png" width={100} height={66} />
-                                        }
-
+                                        <img alt="" src="../assets/img/teste/aperto-de-mao.png" width={100} height={66} />
                                     </i>
-                                </a>
+                                )}
                             </div>
                             <div className='mb-4'>
                                 <h2 className='titulo-cinza'>

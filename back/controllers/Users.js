@@ -93,6 +93,14 @@ module.exports = {
         };
 
         try {
+            // Verificar se CPF/CNPJ já está cadastrado
+            const userExistente = await Users.findOne({
+                where: { descCPFCNPJ: CPFCNPJ }
+            });
+            if (userExistente) {
+                return res.status(409).json({ success: false, message: "Este CPF/CNPJ já está cadastrado no sistema." });
+            }
+
             const listaUsers = await Users.create(dadosUsuario);
             if (listaUsers) {
                 novoUsuario(Email, Nome, CPFCNPJ);

@@ -41,19 +41,18 @@ module.exports = {
 
             let anuncios;
             try {
-                anuncios = await database.query(`SELECT a.*
+                anuncios = await database.query(`SELECT a.*, atv.nomeAmigavel AS nomeAtividade
     FROM anuncio a
+    LEFT JOIN atividade atv ON atv.atividade = a.codAtividade
     WHERE 
         a.activate = 1
         AND a.codUf = :uf
         AND (a.codCaderno = :caderno OR a.codCaderno = :cadernoId)
+        AND (a.codTipoAnuncio != 4 OR a.moderacao = 'autorizado')
         AND (
             a.descAnuncio LIKE :termo
-            OR EXISTS (
-                SELECT 1 FROM atividade atv
-                WHERE atv.atividade = a.codAtividade
-                  AND (atv.atividade LIKE :termo OR atv.nomeAmigavel LIKE :termo)
-            )
+            OR atv.atividade LIKE :termo
+            OR atv.nomeAmigavel LIKE :termo
             OR EXISTS (
                 SELECT 1 FROM tags t
                 WHERE t.codAnuncio = a.codAnuncio
@@ -74,19 +73,18 @@ module.exports = {
                 });
             } catch (queryErr) {
                 console.warn('Query com tabela tags falhou, tentando sem tags:', queryErr.message);
-                anuncios = await database.query(`SELECT a.*
+                anuncios = await database.query(`SELECT a.*, atv.nomeAmigavel AS nomeAtividade
     FROM anuncio a
+    LEFT JOIN atividade atv ON atv.atividade = a.codAtividade
     WHERE 
         a.activate = 1
         AND a.codUf = :uf
         AND (a.codCaderno = :caderno OR a.codCaderno = :cadernoId)
+        AND (a.codTipoAnuncio != 4 OR a.moderacao = 'autorizado')
         AND (
             a.descAnuncio LIKE :termo
-            OR EXISTS (
-                SELECT 1 FROM atividade atv
-                WHERE atv.atividade = a.codAtividade
-                  AND (atv.atividade LIKE :termo OR atv.nomeAmigavel LIKE :termo)
-            )
+            OR atv.atividade LIKE :termo
+            OR atv.nomeAmigavel LIKE :termo
         )
     ORDER BY a.codAtividade ASC, a.codTipoAnuncio DESC, a.createdAt ASC, a.descAnuncio ASC
     LIMIT :limit OFFSET :offset;`, {
@@ -120,6 +118,7 @@ module.exports = {
       a.activate = 1
       AND a.codUf = :uf
       AND (a.codCaderno = :caderno OR a.codCaderno = :cadernoId)
+      AND (a.codTipoAnuncio != 4 OR a.moderacao = 'autorizado')
       AND (
         a.descAnuncio LIKE :termo
         OR EXISTS (
@@ -150,6 +149,7 @@ module.exports = {
       a.activate = 1
       AND a.codUf = :uf
       AND (a.codCaderno = :caderno OR a.codCaderno = :cadernoId)
+      AND (a.codTipoAnuncio != 4 OR a.moderacao = 'autorizado')
       AND (
         a.descAnuncio LIKE :termo
         OR EXISTS (
@@ -198,10 +198,12 @@ module.exports = {
                 where: {
                     UF: uf
                 },
+                attributes: ['codCaderno', 'nomeCaderno', 'nomeCadernoFriendly', 'UF', 'isCapital'],
                 order: [
                     ['isCapital', 'ASC'],
                     ['nomeCaderno', 'ASC']
                 ],
+                limit: 500,
             });
             return res.json(cadernos);
         } catch (error) {
@@ -275,6 +277,10 @@ module.exports = {
             const anuncios = await Anuncio.findAndCountAll({
                 where: {
                     codCaderno: codigoCaderno,
+                    [Op.or]: [
+                        { codTipoAnuncio: { [Op.ne]: 4 } },
+                        { moderacao: 'autorizado' }
+                    ]
                 },
                 limit: porPagina,
                 offset: offset
@@ -410,7 +416,7 @@ module.exports = {
         const { uf, bairro, profissao } = req.query;
 
         try {
-            let whereConditions = ['a.activate = 1'];
+            let whereConditions = ['a.activate = 1', '(a.codTipoAnuncio != 4 OR a.moderacao = \'autorizado\')'];
             let replacements = {};
 
             if (uf) {

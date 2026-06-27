@@ -120,43 +120,41 @@ async function faleComDono(data, emailAutorizante, filename) {
     //---------------------------------------------------------------------------------->
 
 };
-async function faleComDonoCliente(data) {
-
-    //variaveis do corpo de envio do email com variação de idiomas para o novo aluno
+async function faleComDonoCliente(data, nomeDono) {
 
     const mailSentPT = await transporter.sendMail({
-        from: `${data.nome} <${data.email}>`,
-        //from: `kledisom <dev@ziiz.com.br>`,
-        to: ['dev@ziiz.com.br', data.email, data.email_copia],
-        subject: `${data.option}`,
-        text: `${data.option}`,
+        from: `Minisitio <${SMTP_CONFIG.auth.user}>`,
+        to: data.email,
+        subject: `Minisitio - Mensagem recebida!`,
+        text: `Minisitio - Mensagem recebida!`,
         html: `
         <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pedido Recebido!</title>
-</head>
-<body>
-    
-    <p>Obrigado por entrar em contato!</p>
-
-    <p>Recebemos seu pedido com sucesso, entraremos em contato em breve!</p>
-
-    <p>Nossa equipe de suporte está pronta para ajudar caso você precise de alguma assistência. Entre em contato conosco pelo e-mail: <a href="mailto:${data.email}">${data.email}</a>.</p>
-
-    <hr>
-    <p>--</p>
-</body>
+            <meta charset="UTF-8">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Mensagem Recebida!</title>
+        </head>
+        <body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+            <h2 style="color: #2e7d32;">Obrigado por entrar em contato!</h2>
+            
+            <p>Olá <strong>${data.nome}</strong>,</p>
+            
+            <p>Sua mensagem foi enviada com sucesso para <strong>${nomeDono || 'o proprietário do perfil'}</strong>.</p>
+            
+            <p>Assunto: <strong>${data.option}</strong></p>
+            
+            <div style="background: #f5f5f5; padding: 15px; border-radius: 8px; margin: 15px 0;">
+                <p style="margin: 0;"><em>"${data.mensagem}"</em></p>
+            </div>
+            
+            <p>Aguarde contato em breve!</p>
+            
+            <hr style="border: none; border-top: 1px solid #ddd; margin: 20px 0;">
+            <p style="color: #888; font-size: 12px;">Minisitio - Conectando pessoas e negócios</p>
+        </body>
         `
-        /*       attachments: [
-                  {
-                      path: path
-                  }
-              ] */
     });
     return true;
-    //---------------------------------------------------------------------------------->
 
 };
 

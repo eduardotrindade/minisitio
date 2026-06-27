@@ -108,7 +108,7 @@ function Cardlist(props) {
                   <div className="col-md-12 col-xs-12 pesquisa-nome descAtividade">
                     <h4 className="d-flex">{/* font-14 */}
                       <i className="fa fa-briefcase"></i>
-                      <div className="endereco label-ativity">{props.anuncio.codAtividade}</div>
+                      <div className="endereco label-ativity">{props.anuncio.nomeAtividade || props.anuncio.codAtividade}</div>
 
                       {/*    {caderno.map((item) => {
              if (item.codCaderno === props.codCity) {

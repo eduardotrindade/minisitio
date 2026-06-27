@@ -2138,6 +2138,8 @@ module.exports = {
             buscaPorNome();
         } else if (requisito === 'codUf') {
             buscaUf();
+        } else if (requisito === 'codAtividade') {
+            buscaPorAtividade();
         } else {
             buscaNormal();
         }
@@ -2175,7 +2177,8 @@ module.exports = {
                     { model: Pagamento, as: "pagamentos", attributes: ["id", "valor", "status", "data"] },
                     { model: Caderno, as: 'caderno', attributes: ['nomeCaderno'], required: false },
                     { model: Desconto, as: 'desconto', attributes: ['hash'], required: false },
-                    { model: Usuario, as: 'usuario', attributes: ['descNome', 'descCPFCNPJ', 'descEmail', 'descTelefone'], required: false }
+                    { model: Usuario, as: 'usuario', attributes: ['descNome', 'descCPFCNPJ', 'descEmail', 'descTelefone'], required: false },
+                    { model: Atividade, as: 'atividade', attributes: ['nomeAmigavel'], required: false }
                 ]
             });
             console.timeEnd("espaco")
@@ -2187,6 +2190,7 @@ module.exports = {
                 resultAnuncio.forEach((anun, i) => {
                     anun.codCaderno = anun.caderno ? anun.caderno.nomeCaderno : "não registrado";
                     anun.codPA = anun.desconto ? anun.desconto.hash : "99.999.9999";
+                    anun.codAtividade = anun.atividade ? anun.atividade.nomeAmigavel : anun.codAtividade;
                     if (anun.usuario) {
                         anun.codUsuario = anun.usuario.descNome;
                         anun.dataValues.loginUser = anun.usuario.descCPFCNPJ;
@@ -2270,7 +2274,8 @@ module.exports = {
                     { model: Pagamento, as: "pagamentos", attributes: ["id", "valor", "status", "data"] },
                     { model: Caderno, as: 'caderno', attributes: ['nomeCaderno'], required: false },
                     { model: Desconto, as: 'desconto', attributes: ['hash'], required: false },
-                    { model: Usuario, as: 'usuario', attributes: ['descNome', 'descCPFCNPJ', 'descEmail', 'descTelefone'], required: false }
+                    { model: Usuario, as: 'usuario', attributes: ['descNome', 'descCPFCNPJ', 'descEmail', 'descTelefone'], required: false },
+                    { model: Atividade, as: 'atividade', attributes: ['nomeAmigavel'], required: false }
                 ]
             });
             console.timeEnd("espaco")
@@ -2282,6 +2287,7 @@ module.exports = {
                 resultAnuncio.forEach((anun, i) => {
                     anun.codCaderno = anun.caderno ? anun.caderno.nomeCaderno : "não registrado";
                     anun.codPA = anun.desconto ? anun.desconto.hash : "99.999.9999";
+                    anun.codAtividade = anun.atividade ? anun.atividade.nomeAmigavel : anun.codAtividade;
                     if (anun.usuario) {
                         anun.codUsuario = anun.usuario.descNome;
                         anun.dataValues.loginUser = anun.usuario.descCPFCNPJ;
@@ -2351,7 +2357,8 @@ module.exports = {
                     { model: Pagamento, as: "pagamentos", attributes: ["id", "valor", "status", "data"] },
                     { model: Caderno, as: 'caderno', attributes: ['nomeCaderno'], required: false },
                     { model: Desconto, as: 'desconto', attributes: ['hash'], required: false },
-                    { model: Usuario, as: 'usuario', attributes: ['descNome', 'descCPFCNPJ', 'descEmail', 'descTelefone'], required: false }
+                    { model: Usuario, as: 'usuario', attributes: ['descNome', 'descCPFCNPJ', 'descEmail', 'descTelefone'], required: false },
+                    { model: Atividade, as: 'atividade', attributes: ['nomeAmigavel'], required: false }
                 ]
             });
 
@@ -2362,6 +2369,7 @@ module.exports = {
                 resultAnuncio.forEach((anun, i) => {
                     anun.codCaderno = anun.caderno ? anun.caderno.nomeCaderno : "não registrado";
                     anun.codPA = anun.desconto ? anun.desconto.hash : "99.999.9999";
+                    anun.codAtividade = anun.atividade ? anun.atividade.nomeAmigavel : anun.codAtividade;
                     if (anun.usuario) {
                         anun.codUsuario = anun.usuario.descNome;
                         anun.dataValues.loginUser = anun.usuario.descCPFCNPJ;
@@ -2423,7 +2431,8 @@ module.exports = {
                     { model: Pagamento, as: "pagamentos", attributes: ["id", "valor", "status", "data"] },
                     { model: Caderno, as: 'caderno', attributes: ['nomeCaderno'], required: false },
                     { model: Desconto, as: 'desconto', attributes: ['hash'], required: false },
-                    { model: Usuario, as: 'usuario', attributes: ['descNome', 'descCPFCNPJ', 'descEmail', 'descTelefone'], required: false }
+                    { model: Usuario, as: 'usuario', attributes: ['descNome', 'descCPFCNPJ', 'descEmail', 'descTelefone'], required: false },
+                    { model: Atividade, as: 'atividade', attributes: ['nomeAmigavel'], required: false }
                 ]
             });
 
@@ -2434,6 +2443,7 @@ module.exports = {
                 resultAnuncio.forEach((anun, i) => {
                     anun.codCaderno = anun.caderno ? anun.caderno.nomeCaderno : "não registrado";
                     anun.codPA = anun.desconto ? anun.desconto.hash : "99.999.9999";
+                    anun.codAtividade = anun.atividade ? anun.atividade.nomeAmigavel : anun.codAtividade;
                     if (anun.usuario) {
                         anun.codUsuario = anun.usuario.descNome;
                         anun.dataValues.loginUser = anun.usuario.descCPFCNPJ;
@@ -2466,6 +2476,85 @@ module.exports = {
 
 
             }
+        }
+
+        async function buscaPorAtividade() {
+            const whereAtividade = {};
+            if (estado && estado !== 'todos' && estado !== 'null') {
+                whereAtividade.codUf = estado;
+            }
+
+            const atividadesEncontradas = await Atividade.findAll({
+                where: {
+                    nomeAmigavel: { [Op.like]: `%${nu_hash}%` },
+                    ...whereAtividade
+                },
+                attributes: ['codAtividade', 'nomeAmigavel']
+            });
+
+            if (atividadesEncontradas.length < 1) {
+                return res.json({ success: false, message: 'Nenhuma atividade encontrada com esse nome' });
+            }
+
+            const codAtividades = atividadesEncontradas.map(a => a.codAtividade);
+
+            const whereClause = {
+                codAtividade: { [Op.in]: codAtividades }
+            };
+
+            if (estado && estado !== 'todos' && estado !== 'null') {
+                whereClause.codUf = estado;
+            }
+
+            if (caderno && caderno !== 'todos' && caderno !== 'null') {
+                whereClause.codCaderno = caderno;
+            }
+
+            const resultAnuncio = await Anuncio.findAll({
+                where: whereClause,
+                limit: porPagina,
+                offset: offset,
+                attributes: [
+                    'codAnuncio', 'codOrigem', 'codDuplicado', 'descCPFCNPJ',
+                    'descAnuncio', 'codTipoAnuncio', 'codCaderno', 'codUf',
+                    'activate', 'moderacao', 'descPromocao', 'createdAt',
+                    'dueDate', 'codDesconto', 'codAtividade', 'periodo'
+                ],
+                include: [
+                    { model: Pagamento, as: "pagamentos", attributes: ["id", "valor", "status", "data"] },
+                    { model: Caderno, as: 'caderno', attributes: ['nomeCaderno'], required: false },
+                    { model: Desconto, as: 'desconto', attributes: ['hash'], required: false },
+                    { model: Usuario, as: 'usuario', attributes: ['descNome', 'descCPFCNPJ', 'descEmail', 'descTelefone'], required: false },
+                    { model: Atividade, as: 'atividade', attributes: ['nomeAmigavel'], required: false }
+                ]
+            });
+
+            if (resultAnuncio.length < 1) return res.json({ success: false, message: 'Nenhum anúncio encontrado para essa atividade' });
+
+            resultAnuncio.forEach((anun) => {
+                anun.codCaderno = anun.caderno ? anun.caderno.nomeCaderno : "não registrado";
+                anun.codPA = anun.desconto ? anun.desconto.hash : "99.999.9999";
+                anun.codAtividade = anun.atividade ? anun.atividade.nomeAmigavel : anun.codAtividade;
+                if (anun.usuario) {
+                    anun.codUsuario = anun.usuario.descNome;
+                    anun.dataValues.loginUser = anun.usuario.descCPFCNPJ;
+                    anun.dataValues.loginEmail = anun.usuario.descEmail;
+                    anun.dataValues.loginContato = anun.usuario.descTelefone;
+                }
+            });
+
+            const totalItens = await Anuncio.count({ where: whereClause });
+            const totalPaginas = Math.ceil(totalItens / porPagina);
+
+            res.json({
+                success: true,
+                message: {
+                    anuncios: resultAnuncio,
+                    paginaAtual: paginaAtual,
+                    totalPaginas: totalPaginas,
+                    totalItem: totalItens
+                }
+            });
         }
 
     },
@@ -3368,6 +3457,20 @@ module.exports = {
         });
 
         if (promocaoExistente) {
+            // Validar se a data não excede 90 dias (se fornecida)
+            if (promocaoData) {
+                const hoje = new Date();
+                const dataValidade = new Date(promocaoData);
+                const diffDias = Math.ceil((dataValidade - hoje) / (1000 * 60 * 60 * 24));
+                
+                if (diffDias > 90) {
+                    return res.json({ success: false, message: "A data de validade não pode exceder 90 dias." });
+                }
+                if (diffDias < 0) {
+                    return res.json({ success: false, message: "A data de validade não pode ser no passado." });
+                }
+            }
+
             /* try { */
             const atualizarPromocao = await Promocao.update({
                 data_validade: promocaoData || "",
@@ -3385,6 +3488,18 @@ module.exports = {
 
         if (!promocaoExistente) {
             if (logoPromocao != '' && promocaoData != '') {
+                // Validar se a data não excede 90 dias
+                const hoje = new Date();
+                const dataValidade = new Date(promocaoData);
+                const diffDias = Math.ceil((dataValidade - hoje) / (1000 * 60 * 60 * 24));
+                
+                if (diffDias > 90) {
+                    return res.json({ success: false, message: "A data de validade não pode exceder 90 dias." });
+                }
+                if (diffDias < 0) {
+                    return res.json({ success: false, message: "A data de validade não pode ser no passado." });
+                }
+
                 const criarPromocao = await Promocao.create({
                     codAnuncio: idAnuncio,
                     banner: logoPromocao || "",
@@ -5756,6 +5871,11 @@ module.exports = {
         }
 
         const totalLinhasCsv = total - 1;
+        const LIMITE_IMPORTACAO = 100000;
+        if (totalLinhasCsv > LIMITE_IMPORTACAO) {
+            console.log(`Importação limitada a ${LIMITE_IMPORTACAO} registros. CSV tem ${totalLinhasCsv}.`);
+        }
+        const totalParaImportar = Math.min(totalLinhasCsv, LIMITE_IMPORTACAO);
 
 
 
@@ -5915,6 +6035,10 @@ module.exports = {
                 }));
 
                 for await (const row of stream) {
+                    if (index > totalParaImportar) {
+                        console.log(`Limite de ${LIMITE_IMPORTACAO} registros atingido.`);
+                        break;
+                    }
                     await processRow(row, index);
                     await new Promise(resolve => setTimeout(resolve, DELAY_MS));
                     index++;
@@ -6042,10 +6166,14 @@ module.exports = {
 
         async function processFile() {
             console.log("Iniciando leitura do arquivo...");
-
+            const LIMITE_IMPORTACAO = 100000;
             const stream = fs.createReadStream(arquivoImportado).pipe(csv());
 
             for await (const row of stream) {
+                if (totalLinhas >= LIMITE_IMPORTACAO) {
+                    console.log(`Limite de ${LIMITE_IMPORTACAO} registros atingido.`);
+                    break;
+                }
                 await processRow(row);
             }
 

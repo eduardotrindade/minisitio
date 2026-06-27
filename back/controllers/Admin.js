@@ -1483,7 +1483,7 @@ WHERE anuncio.codUf = :estado AND anuncio.codCaderno = :caderno;
             const descontoCriado = await Descontos.create({
                 idUsuario: req.body.usuario,
                 userType: usuario[0].codTipoPessoa,
-                desconto: req.body.valorDesconto,
+                desconto: parseFloat(req.body.valorDesconto) || 0,
                 descricao: req.body.descricao,
                 hash: req.body.hash,
                 borda: null,
