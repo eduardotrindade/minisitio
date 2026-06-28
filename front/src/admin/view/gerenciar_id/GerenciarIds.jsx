@@ -115,7 +115,10 @@ const GerenciarIds = () => {
                     document.querySelector(".selecionada")?.remove();
                 }
             })
-            .catch(() => { setShowSpinner(false); })
+            .catch((err) => {
+                setShowSpinner(false);
+                Swal.fire("Erro", "Não foi possível excluir o registro. Tente novamente ou entre em contato com o suporte.", "error");
+            })
     };
 
     function buscarUserId() {

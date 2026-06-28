@@ -1522,7 +1522,7 @@ WHERE anuncio.codUf = :estado AND anuncio.codCaderno = :caderno;
             if (anunciosVinculados > 0) {
                 return res.status(409).json({
                     success: false,
-                    message: `Não é possível excluir este desconto. Existem ${anunciosVinculados} anúncio(s) vinculados. Desvincule os anúncios antes de excluir.`
+                    message: `Ops! Este desconto está vinculado a ${anunciosVinculados} anúncio(s) ativo(s) e não pode ser excluído enquanto estiver em uso. Por favor, desvincle os anúncios primeiro ou entre em contato com o suporte.`
                 });
             }
 
@@ -1533,7 +1533,7 @@ WHERE anuncio.codUf = :estado AND anuncio.codCaderno = :caderno;
             if (usuariosVinculados > 0) {
                 return res.status(409).json({
                     success: false,
-                    message: `Não é possível excluir este desconto. Existem ${usuariosVinculados} usuário(s) vinculados. Desvincule os usuários antes de excluir.`
+                    message: `Ops! Este desconto está vinculado a ${usuariosVinculados} usuário(s) e não pode ser excluído enquanto estiver em uso. Por favor, desvincule os usuários primeiro ou entre em contato com o suporte.`
                 });
             }
 
