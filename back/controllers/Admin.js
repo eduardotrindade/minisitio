@@ -1542,7 +1542,7 @@ WHERE anuncio.codUf = :estado AND anuncio.codCaderno = :caderno;
 
             res.json({ success: true, message: `Registro ${uuid} apagado da base!` });
         } catch (err) {
-            res.json(err);
+            res.json({ success: false, message: err.message || "Erro ao excluir registro. Tente novamente." });
         }
 
     },
