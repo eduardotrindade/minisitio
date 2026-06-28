@@ -205,22 +205,23 @@ const FormCadastro = () => {
                     } else {
 
                         setShowSpinner(false);
+                        let errorMsg = 'Erro ao cadastrar usuário.';
+                        if (typeof res.message === 'string') {
+                            errorMsg = res.message;
+                        } else if (res.message?.errors?.[0]?.message) {
+                            errorMsg = res.message.errors[0].message;
+                        }
                         Swal.fire({
                             title: 'erro!',
-                            text: res.message.errors[0].message,
+                            text: errorMsg,
                             icon: 'error',
                             confirmButtonText: 'Entendi'
-                        })
-                        //alert(res.message.errors[0].message);
-                        // console.log(res.message.errors[0].message);
-
+                        });
                     }
                 }).catch((error) => {
                     if (error === 'Sessão expirada') {
                         console.log("Sessão expirada, redirecionamento já realizado.");
-                        // Aqui você pode evitar que o erro seja mostrado globalmente
                     } else {
-                        // Trate outros erros aqui, se necessário
                         console.error('Erro na requisição:', error);
                     }
                 });
