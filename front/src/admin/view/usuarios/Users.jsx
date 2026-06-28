@@ -60,12 +60,16 @@ const Users = () => {
                     setShowSpinner(false);
                 });
         } else {
-            fetch(`${masterPath.url}/admin/usuario?page=${param}`)
+            fetch(`${masterPath.url}/admin/usuario?page=${param}`, {
+                headers: { "authorization": 'Bearer ' + tokenAuth }
+            })
                 .then((x) => {
                     if (x.status === 401) {
                         navigate('/login');
-                        window.location.reload();
                         return Promise.reject('Sessão expirada');
+                    }
+                    if (!x.ok) {
+                        throw new Error(`HTTP error: ${x.status}`);
                     }
                     return x.json();
                 })
@@ -73,7 +77,10 @@ const Users = () => {
                     setUsuarios(res);
                     setShowSpinner(false);
                 })
-                .catch(() => { setShowSpinner(false); })
+                .catch((err) => {
+                    console.error('Erro ao carregar usuários:', err);
+                    setShowSpinner(false);
+                });
         }
 
 
