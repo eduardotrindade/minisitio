@@ -432,8 +432,20 @@ module.exports = {
                 replacements.bairro = bairro;
             }
             if (profissao) {
-                whereConditions.push('(a.codAtividade LIKE :profissao OR atv.nomeAmigavel LIKE :profissao)');
-                replacements.profissao = `%${profissao}%`;
+                const termo = `%${profissao}%`;
+                replacements.profissao = termo;
+                replacements.profissao2 = `%${profissao}%`;
+                replacements.profissao3 = `%${profissao}%`;
+                replacements.profissao4 = profissao;
+                
+                whereConditions.push(`
+                    (atv.nomeAmigavel LIKE :profissao 
+                    OR atv.atividade LIKE :profissao2
+                    OR a.descAnuncio LIKE :profissao3 
+                    OR a.descDescricao LIKE :profissao3
+                    OR atv.atividade = :profissao4
+                    OR a.codAtividade = :profissao4)
+                `);
             }
 
             const whereClause = whereConditions.join(' AND ');
