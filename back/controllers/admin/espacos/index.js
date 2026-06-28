@@ -3757,6 +3757,11 @@ module.exports = {
 
             });
 
+            if (deleteAnuncio === 0) {
+                res.json({ success: false, message: "Anúncio não encontrado ou já excluído." });
+                return;
+            }
+
             if (tipoAnuncio == 1) {
                 await Caderno.decrement('basico', {
                     where: {

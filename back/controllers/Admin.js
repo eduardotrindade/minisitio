@@ -1523,17 +1523,6 @@ WHERE anuncio.codUf = :estado AND anuncio.codCaderno = :caderno;
                 });
             }
 
-            const usuariosVinculados = await Usuarios.count({
-                where: { codDesconto: uuid }
-            });
-
-            if (usuariosVinculados > 0) {
-                return res.status(409).json({
-                    success: false,
-                    message: `Ops! Este desconto está vinculado a ${usuariosVinculados} usuário(s) e não pode ser excluído enquanto estiver em uso. Por favor, desvincule os usuários primeiro ou entre em contato com o suporte.`
-                });
-            }
-
             const resultAnuncio = await Descontos.destroy({ where: { idDesconto: uuid } });
 
 
