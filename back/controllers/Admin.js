@@ -1189,13 +1189,45 @@ WHERE anuncio.codUf = :estado AND anuncio.codCaderno = :caderno;
     },
     criarAtividade: async (req, res) => {
         try {
-            const atividadeCriada = await Atividade.create({
-                nomeAmigavel: req.body.atividade,
-                atividade: req.body.atividade,
-                corTitulo: req.body.corTitulo
-            });
-            res.json({ success: true, message: `Atividade "${atividadeCriada.atividade}" criada com sucesso!` });
+            const database = require('../config/db');
+
+            // Garantir AUTO_INCREMENT antes de inserir
+            try {
+                await database.query(`ALTER TABLE atividade MODIFY COLUMN id INT NOT NULL AUTO_INCREMENT`);
+            } catch (e) {
+                // Se falhar, tentar criar a tabela completa
+                try {
+                    await database.query(`
+                        CREATE TABLE IF NOT EXISTS atividade (
+                            id INT AUTO_INCREMENT PRIMARY KEY,
+                            atividade TEXT NOT NULL,
+                            nomeAmigavel TEXT NOT NULL,
+                            corTitulo TEXT NOT NULL,
+                            createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+                            updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+                        )
+                    `);
+                } catch (e2) {
+                    console.error('Erro ao criar/corrigir tabela atividade:', e2.message);
+                }
+            }
+
+            // Usar SQL direto para inserir
+            const [result] = await database.query(
+                `INSERT INTO atividade (atividade, nomeAmigavel, corTitulo, createdAt, updatedAt) VALUES (?, ?, ?, NOW(), NOW())`,
+                {
+                    replacements: [
+                        req.body.atividade,
+                        req.body.atividade,
+                        req.body.corTitulo
+                    ]
+                }
+            );
+
+            const insertedId = result.insertId;
+            res.json({ success: true, message: `Atividade "${req.body.atividade}" criada com sucesso!`, id: insertedId });
         } catch (err) {
+            console.error('Erro ao criar atividade:', err.message);
             res.json({ success: false, message: err.message || "Erro ao criar atividade." });
         }
 
