@@ -7222,59 +7222,74 @@ module.exports = {
         }
 
         try {
-            const whereClause = {};
-            
+            const database = require('../../config/db');
+
+            // Construir WHERE SQL diretamente (muito mais eficiente que carregar tudo na memória)
+            let conditions = [];
+            let replacements = [];
+
             if (search) {
-                whereClause[Sequelize.Op.or] = [
-                    { descAnuncio: { [Sequelize.Op.like]: `%${search}%` } },
-                    { descCPFCNPJ: { [Sequelize.Op.like]: `%${search}%` } },
-                    { descEmailRetorno: { [Sequelize.Op.like]: `%${search}%` } }
-                ];
+                conditions.push(`(descAnuncio LIKE ? OR descCPFCNPJ LIKE ? OR descEmailRetorno LIKE ?)`);
+                replacements.push(`%${search}%`, `%${search}%`, `%${search}%`);
             }
-            if (uf) whereClause.codUf = uf;
-            if (caderno) whereClause.codCaderno = caderno;
+            if (uf) {
+                conditions.push(`codUf = ?`);
+                replacements.push(uf);
+            }
+            if (caderno) {
+                conditions.push(`codCaderno = ?`);
+                replacements.push(caderno);
+            }
 
-            // Primeiro buscar os anúncios para atualizar contadores
-            const anuncios = await Anuncio.findAll({
-                where: whereClause,
-                attributes: ['codTipoAnuncio', 'codUf', 'codCaderno'],
-                raw: true
-            });
+            const whereSQL = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
 
-            if (anuncios.length === 0) {
+            // Contar total primeiro
+            const [countResult] = await database.query(
+                `SELECT COUNT(*) as total FROM anuncio ${whereSQL}`,
+                { replacements }
+            );
+            const total = countResult[0].total;
+
+            if (total === 0) {
                 return res.json({ success: true, deletedCount: 0, message: "Nenhum registro encontrado" });
             }
 
-            // Contar por tipo para atualizar cadernos
-            const contadores = {};
-            for (const a of anuncios) {
-                const key = `${a.codUf}|${a.codCaderno}`;
-                if (!contadores[key]) contadores[key] = { uf: a.codUf, caderno: a.codCaderno, basico: 0, completo: 0, total: 0 };
-                contadores[key].total++;
-                if (a.codTipoAnuncio == 1) contadores[key].basico++;
-                if (a.codTipoAnuncio == 3) contadores[key].completo++;
-            }
+            // Responder imediatamente e deletar em background em lotes
+            res.json({ success: true, deletedCount: total, message: `${total} registro(s) sendo deletado(s)...`, processing: true });
 
-            // Deletar em massa
-            const deletedCount = await Anuncio.destroy({ where: whereClause });
+            // Deletar em lotes de 1000 em background
+            const BATCH_SIZE = 1000;
+            let deletedTotal = 0;
 
-            // Atualizar contadores dos cadernos
-            for (const key of Object.keys(contadores)) {
-                const c = contadores[key];
-                const cadernoReg = await Caderno.findOne({
-                    where: { UF: c.uf, nomeCaderno: c.caderno },
-                    attributes: ['codCaderno', 'basico', 'completo', 'total']
-                });
-                if (cadernoReg) {
-                    if (c.basico > 0) cadernoReg.basico = Math.max(0, cadernoReg.basico - c.basico);
-                    if (c.completo > 0) cadernoReg.completo = Math.max(0, cadernoReg.completo - c.completo);
-                    cadernoReg.total = Math.max(0, cadernoReg.total - c.total);
-                    await cadernoReg.save();
+            (async () => {
+                try {
+                    while (true) {
+                        const [result] = await database.query(
+                            `DELETE FROM anuncio ${whereSQL} LIMIT ${BATCH_SIZE}`,
+                            { replacements }
+                        );
+
+                        if (result.affectedRows === 0) break;
+                        deletedTotal += result.affectedRows;
+                        console.log(`DELETE BULK: ${deletedTotal}/${total} deletados`);
+                    }
+
+                    // Atualizar contadores dos cadernos afetados
+                    if (search) {
+                        await database.query(
+                            `UPDATE caderno c SET
+                                basico = GREATEST(0, (SELECT COUNT(*) FROM anuncio a WHERE a.codUf = c.UF AND a.codCaderno = c.nomeCaderno AND a.codTipoAnuncio = 1)),
+                                completo = GREATEST(0, (SELECT COUNT(*) FROM anuncio a WHERE a.codUf = c.UF AND a.codCaderno = c.nomeCaderno AND a.codTipoAnuncio = 3)),
+                                total = GREATEST(0, (SELECT COUNT(*) FROM anuncio a WHERE a.codUf = c.UF AND a.codCaderno = c.nomeCaderno))
+                            `
+                        );
+                    }
+
+                    console.log(`DELETE BULK CONCLUIDO: ${deletedTotal} registros deletados`);
+                } catch (err) {
+                    console.error('Erro no delete bulk background:', err.message);
                 }
-            }
-
-            console.log(`DELETE BULK: ${deletedCount} registros deletados (busca: "${search}")`);
-            res.json({ success: true, deletedCount, message: `${deletedCount} registro(s) deletado(s)` });
+            })();
 
         } catch (err) {
             console.error('Erro no delete bulk:', err);
