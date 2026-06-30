@@ -428,54 +428,59 @@ module.exports = (io, loginLimiter) => {
     // Duplicações no banco de dados
     router.get('/api/admin/duplicacoes', auth, async (req, res) => {
         try {
+            const limit = parseInt(req.query.limit) || 100;
+            const offset = parseInt(req.query.offset) || 0;
+
             const [usuariosEmail] = await database.query(`
                 SELECT descEmail as valor, COUNT(*) as total
                 FROM usuario WHERE descEmail IS NOT NULL AND descEmail != ''
-                GROUP BY descEmail HAVING total > 1 ORDER BY total DESC
-            `);
+                GROUP BY descEmail HAVING total > 1 ORDER BY total DESC LIMIT ? OFFSET ?
+            `, { replacements: [limit, offset] });
             const [usuariosCPF] = await database.query(`
                 SELECT descCPFCNPJ as valor, COUNT(*) as total
                 FROM usuario WHERE descCPFCNPJ IS NOT NULL AND descCPFCNPJ != ''
-                GROUP BY descCPFCNPJ HAVING total > 1 ORDER BY total DESC
-            `);
+                GROUP BY descCPFCNPJ HAVING total > 1 ORDER BY total DESC LIMIT ? OFFSET ?
+            `, { replacements: [limit, offset] });
             const [usuariosTel] = await database.query(`
                 SELECT descTelefone as valor, COUNT(*) as total
                 FROM usuario WHERE descTelefone IS NOT NULL AND descTelefone != ''
-                GROUP BY descTelefone HAVING total > 1 ORDER BY total DESC
-            `);
+                GROUP BY descTelefone HAVING total > 1 ORDER BY total DESC LIMIT ? OFFSET ?
+            `, { replacements: [limit, offset] });
             const [anuncioEmailCom] = await database.query(`
                 SELECT descEmailComercial as valor, COUNT(*) as total
                 FROM anuncio WHERE descEmailComercial IS NOT NULL AND descEmailComercial != ''
-                GROUP BY descEmailComercial HAVING total > 1 ORDER BY total DESC
-            `);
+                GROUP BY descEmailComercial HAVING total > 1 ORDER BY total DESC LIMIT ? OFFSET ?
+            `, { replacements: [limit, offset] });
             const [anuncioEmailRet] = await database.query(`
                 SELECT descEmailRetorno as valor, COUNT(*) as total
                 FROM anuncio WHERE descEmailRetorno IS NOT NULL AND descEmailRetorno != ''
-                GROUP BY descEmailRetorno HAVING total > 1 ORDER BY total DESC
-            `);
+                GROUP BY descEmailRetorno HAVING total > 1 ORDER BY total DESC LIMIT ? OFFSET ?
+            `, { replacements: [limit, offset] });
             const [anuncioCPF] = await database.query(`
                 SELECT descCPFCNPJ as valor, COUNT(*) as total
                 FROM anuncio WHERE descCPFCNPJ IS NOT NULL AND descCPFCNPJ != ''
-                GROUP BY descCPFCNPJ HAVING total > 1 ORDER BY total DESC
-            `);
+                GROUP BY descCPFCNPJ HAVING total > 1 ORDER BY total DESC LIMIT ? OFFSET ?
+            `, { replacements: [limit, offset] });
             const [anuncioTel] = await database.query(`
                 SELECT descTelefone as valor, COUNT(*) as total
                 FROM anuncio WHERE descTelefone IS NOT NULL AND descTelefone != ''
-                GROUP BY descTelefone HAVING total > 1 ORDER BY total DESC
-            `);
+                GROUP BY descTelefone HAVING total > 1 ORDER BY total DESC LIMIT ? OFFSET ?
+            `, { replacements: [limit, offset] });
             const [anuncioCel] = await database.query(`
                 SELECT descCelular as valor, COUNT(*) as total
                 FROM anuncio WHERE descCelular IS NOT NULL AND descCelular != ''
-                GROUP BY descCelular HAVING total > 1 ORDER BY total DESC
-            `);
+                GROUP BY descCelular HAVING total > 1 ORDER BY total DESC LIMIT ? OFFSET ?
+            `, { replacements: [limit, offset] });
             const [anuncioEmailAut] = await database.query(`
                 SELECT descEmailAutorizante as valor, COUNT(*) as total
                 FROM anuncio WHERE descEmailAutorizante IS NOT NULL AND descEmailAutorizante != ''
-                GROUP BY descEmailAutorizante HAVING total > 1 ORDER BY total DESC
-            `);
+                GROUP BY descEmailAutorizante HAVING total > 1 ORDER BY total DESC LIMIT ? OFFSET ?
+            `, { replacements: [limit, offset] });
 
             res.json({
                 success: true,
+                limit,
+                offset,
                 usuario: {
                     email: usuariosEmail,
                     cpf_cnpj: usuariosCPF,

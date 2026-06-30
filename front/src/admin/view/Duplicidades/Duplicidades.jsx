@@ -10,7 +10,11 @@ const Duplicidades = () => {
     const [filtroTabela, setFiltroTabela] = useState('todos');
     const [filtroCampo, setFiltroCampo] = useState('todos');
     const [busca, setBusca] = useState('');
+    const [offset, setOffset] = useState(0);
+    const [hasMore, setHasMore] = useState(true);
+    const [loadingMore, setLoadingMore] = useState(false);
 
+    const LIMIT = 100;
     const tokenAuth = sessionStorage.getItem('userTokenAccess');
 
     const camposPorTabela = {
@@ -45,33 +49,79 @@ const Duplicidades = () => {
     };
 
     useEffect(() => {
-        fetchDuplicacoes();
-    }, []);
+        setOffset(0);
+        setHasMore(true);
+        fetchDuplicacoes(0, false);
+    }, [filtroTabela, filtroCampo]);
 
-    useEffect(() => {
-        setFiltroCampo('todos');
-    }, [filtroTabela]);
+    function fetchDuplicacoes(currentOffset, append) {
+        const params = new URLSearchParams({
+            limit: LIMIT,
+            offset: currentOffset
+        });
 
-    function fetchDuplicacoes() {
-        setShowSpinner(true);
-        fetch(`${masterPath.url}/admin/duplicacoes`, {
+        if (append) setLoadingMore(true);
+        else setShowSpinner(true);
+
+        fetch(`${masterPath.url}/admin/duplicacoes?${params}`, {
             headers: { "authorization": 'Bearer ' + tokenAuth }
         })
             .then(x => x.json())
             .then(res => {
                 if (res.success) {
-                    setDuplicacoes(res);
+                    if (append) {
+                        setDuplicacoes(prev => mergeDados(prev, res));
+                    } else {
+                        setDuplicacoes(res);
+                    }
+                    // Se retornou menos que LIMIT, não tem mais
+                    const totalItems = countItems(res);
+                    setHasMore(totalItems >= LIMIT);
                 }
                 setShowSpinner(false);
+                setLoadingMore(false);
             })
-            .catch(() => setShowSpinner(false));
+            .catch(() => {
+                setShowSpinner(false);
+                setLoadingMore(false);
+            });
+    }
+
+    function mergeDados(prev, newRes) {
+        if (!prev) return newRes;
+        const merged = { ...prev };
+        ['usuario', 'anuncio'].forEach(tabela => {
+            merged[tabela] = { ...prev[tabela] };
+            Object.keys(newRes[tabela] || {}).forEach(campo => {
+                merged[tabela][campo] = [
+                    ...(prev[tabela]?.[campo] || []),
+                    ...(newRes[tabela][campo] || [])
+                ];
+            });
+        });
+        return merged;
+    }
+
+    function countItems(res) {
+        let count = 0;
+        ['usuario', 'anuncio'].forEach(tabela => {
+            Object.values(res[tabela] || {}).forEach(arr => {
+                count += arr.length;
+            });
+        });
+        return count;
+    }
+
+    function carregarMais() {
+        const nextOffset = offset + LIMIT;
+        setOffset(nextOffset);
+        fetchDuplicacoes(nextOffset, true);
     }
 
     function getDadosFiltrados() {
         if (!duplicacoes) return [];
 
         const resultados = [];
-
         const tabelas = filtroTabela === 'todos' ? ['usuario', 'anuncio'] : [filtroTabela];
 
         tabelas.forEach(tabela => {
@@ -212,6 +262,21 @@ const Duplicidades = () => {
                                 </tbody>
                             </table>
                         </div>
+                        {hasMore && dados.length > 0 && (
+                            <div className="text-center py-3">
+                                <button
+                                    className="btn btn-outline-primary"
+                                    onClick={carregarMais}
+                                    disabled={loadingMore}
+                                >
+                                    {loadingMore ? (
+                                        <><i className="fa fa-spinner fa-spin me-1"></i> Carregando...</>
+                                    ) : (
+                                        <><i className="fa fa-arrow-down me-1"></i> Carregar mais</>
+                                    )}
+                                </button>
+                            </div>
+                        )}
                     </div>
                 </article>
                 <p className='w-100 text-center'>© MINISITIO - {version.version}</p>
