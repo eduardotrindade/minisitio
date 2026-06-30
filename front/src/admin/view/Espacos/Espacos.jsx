@@ -21,6 +21,7 @@ import Spinner from '../../../components/Spinner';
 import Duplicate from './Duplicate';
 import BtnActivate from '../../components/BntActivate';
 import EspacosImport from './EspacosImport';
+import ColumnFilter from '../../components/ColumnFilter';
 
 //API
 import { fetchEspacos, deleteDuplicacaoEspaco } from '../../../api/admin/espacos';
@@ -44,14 +45,14 @@ const Espacos = () => {
     const [uf, setUfs] = useState([]);
     const [caderno, setCaderno] = useState([]);
     const [mostrarInputBusca, setMostrarInputBusca] = useState(true);
-    const [filtroCOD, setFiltroCOD] = useState('');
-    const [filtroCNPJ, setFiltroCNPJ] = useState('');
-    const [filtroNome, setFiltroNome] = useState('');
-    const [filtroTipo, setFiltroTipo] = useState('');
-    const [filtroCaderno, setFiltroCaderno] = useState('');
-    const [filtroUF, setFiltroUF] = useState('');
-    const [filtroEmail, setFiltroEmail] = useState('');
-    const [filtroContato, setFiltroContato] = useState('');
+    const [selCOD, setSelCOD] = useState([]);
+    const [selCNPJ, setSelCNPJ] = useState([]);
+    const [selNomeEsp, setSelNomeEsp] = useState([]);
+    const [selTipoEsp, setSelTipoEsp] = useState([]);
+    const [selCadernoEsp, setSelCadernoEsp] = useState([]);
+    const [selUFEsp, setSelUFEsp] = useState([]);
+    const [selEmailEsp, setSelEmailEsp] = useState([]);
+    const [selContatoEsp, setSelContatoEsp] = useState([]);
 
 
     const location = useLocation();
@@ -746,14 +747,14 @@ Para 100000 linhas: 312500ms
     }
 
     const anunciosFiltrados = (anuncios?.message?.anuncios || []).filter(item => {
-        const matchCOD = !filtroCOD || String(item.codAnuncio).includes(filtroCOD);
-        const matchCNPJ = !filtroCNPJ || (item.descCPFCNPJ || '').includes(filtroCNPJ);
-        const matchNome = !filtroNome || (item.descAnuncio || '').toLowerCase().includes(filtroNome.toLowerCase());
-        const matchTipo = !filtroTipo || (item.codTipoAnuncio || '').toLowerCase().includes(filtroTipo.toLowerCase());
-        const matchCaderno = !filtroCaderno || String(item.codCaderno).includes(filtroCaderno);
-        const matchUF = !filtroUF || String(item.codUf).includes(filtroUF);
-        const matchEmail = !filtroEmail || (item.descEmailComercial || '').toLowerCase().includes(filtroEmail.toLowerCase());
-        const matchContato = !filtroContato || (item.descTelefone || '').includes(filtroContato);
+        const matchCOD = selCOD.length === 0 || selCOD.includes(String(item.codAnuncio));
+        const matchCNPJ = selCNPJ.length === 0 || selCNPJ.includes(item.descCPFCNPJ || '');
+        const matchNome = selNomeEsp.length === 0 || selNomeEsp.includes(item.descAnuncio || '');
+        const matchTipo = selTipoEsp.length === 0 || selTipoEsp.includes(item.codTipoAnuncio || '');
+        const matchCaderno = selCadernoEsp.length === 0 || selCadernoEsp.includes(String(item.codCaderno));
+        const matchUF = selUFEsp.length === 0 || selUFEsp.includes(String(item.codUf));
+        const matchEmail = selEmailEsp.length === 0 || selEmailEsp.includes(item.descEmailComercial || '');
+        const matchContato = selContatoEsp.length === 0 || selContatoEsp.includes(item.descTelefone || '');
         return matchCOD && matchCNPJ && matchNome && matchTipo && matchCaderno && matchUF && matchEmail && matchContato;
     });
 
@@ -879,16 +880,16 @@ Para 100000 linhas: 312500ms
                                         <th>LINK_PERFIL</th>
                                     </tr>
                                     <tr>
-                                        <th><input type="text" className="form-control form-control-sm" placeholder="..." value={filtroCOD} onChange={e => setFiltroCOD(e.target.value)} onClick={e => e.stopPropagation()} style={{ fontSize: '11px' }} /></th>
+                                        <th><ColumnFilter values={(anuncios?.message?.anuncios || []).map(i => String(i.codAnuncio))} selected={selCOD} onChange={setSelCOD} /></th>
                                         <th></th><th></th>
-                                        <th><input type="text" className="form-control form-control-sm" placeholder="..." value={filtroCNPJ} onChange={e => setFiltroCNPJ(e.target.value)} onClick={e => e.stopPropagation()} style={{ fontSize: '11px' }} /></th>
-                                        <th><input type="text" className="form-control form-control-sm" placeholder="..." value={filtroNome} onChange={e => setFiltroNome(e.target.value)} onClick={e => e.stopPropagation()} style={{ fontSize: '11px' }} /></th>
-                                        <th><input type="text" className="form-control form-control-sm" placeholder="..." value={filtroTipo} onChange={e => setFiltroTipo(e.target.value)} onClick={e => e.stopPropagation()} style={{ fontSize: '11px' }} /></th>
-                                        <th><input type="text" className="form-control form-control-sm" placeholder="..." value={filtroCaderno} onChange={e => setFiltroCaderno(e.target.value)} onClick={e => e.stopPropagation()} style={{ fontSize: '11px' }} /></th>
-                                        <th><input type="text" className="form-control form-control-sm" placeholder="..." value={filtroUF} onChange={e => setFiltroUF(e.target.value)} onClick={e => e.stopPropagation()} style={{ fontSize: '11px' }} /></th>
+                                        <th><ColumnFilter values={(anuncios?.message?.anuncios || []).map(i => i.descCPFCNPJ)} selected={selCNPJ} onChange={setSelCNPJ} /></th>
+                                        <th><ColumnFilter values={(anuncios?.message?.anuncios || []).map(i => i.descAnuncio)} selected={selNomeEsp} onChange={setSelNomeEsp} /></th>
+                                        <th><ColumnFilter values={(anuncios?.message?.anuncios || []).map(i => i.codTipoAnuncio)} selected={selTipoEsp} onChange={setSelTipoEsp} /></th>
+                                        <th><ColumnFilter values={(anuncios?.message?.anuncios || []).map(i => String(i.codCaderno))} selected={selCadernoEsp} onChange={setSelCadernoEsp} /></th>
+                                        <th><ColumnFilter values={(anuncios?.message?.anuncios || []).map(i => String(i.codUf))} selected={selUFEsp} onChange={setSelUFEsp} /></th>
                                         <th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th>
-                                        <th><input type="text" className="form-control form-control-sm" placeholder="..." value={filtroEmail} onChange={e => setFiltroEmail(e.target.value)} onClick={e => e.stopPropagation()} style={{ fontSize: '11px' }} /></th>
-                                        <th><input type="text" className="form-control form-control-sm" placeholder="..." value={filtroContato} onChange={e => setFiltroContato(e.target.value)} onClick={e => e.stopPropagation()} style={{ fontSize: '11px' }} /></th>
+                                        <th><ColumnFilter values={(anuncios?.message?.anuncios || []).map(i => i.descEmailComercial)} selected={selEmailEsp} onChange={setSelEmailEsp} /></th>
+                                        <th><ColumnFilter values={(anuncios?.message?.anuncios || []).map(i => i.descTelefone)} selected={selContatoEsp} onChange={setSelContatoEsp} /></th>
                                         <th></th><th></th>
                                     </tr>
                                 </thead>

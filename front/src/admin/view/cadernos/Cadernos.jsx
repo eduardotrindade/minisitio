@@ -14,6 +14,7 @@ import Header from "../Header";
 import Pagination from '../../components/Pagination';
 import Spinner from '../../../components/Spinner';
 import MsgConfirm from '../../components/MsgConfirm';
+import ColumnFilter from '../../components/ColumnFilter';
 
 const Cadernos = () => {
     const [estados, setEstado] = useState([]);
@@ -29,14 +30,14 @@ const Cadernos = () => {
     const [statusCount, setStatusCount] = useState(false);
     const [buscaAtiva, setBuscaAtiva] = useState(false);
     const [showMsgBox, setShowMsgBox] = useState(false);
-    const [filtroUF, setFiltroUF] = useState('');
-    const [filtroCaderno, setFiltroCaderno] = useState('');
-    const [filtroMosaico, setFiltroMosaico] = useState('');
-    const [filtroCEPInicial, setFiltroCEPInicial] = useState('');
-    const [filtroCEPFinal, setFiltroCEPFinal] = useState('');
-    const [filtroBasico, setFiltroBasico] = useState('');
-    const [filtroCompleto, setFiltroCompleto] = useState('');
-    const [filtroTotal, setFiltroTotal] = useState('');
+    const [selUF, setSelUF] = useState([]);
+    const [selCaderno, setSelCaderno] = useState([]);
+    const [selMosaico, setSelMosaico] = useState([]);
+    const [selCEPI, setSelCEPI] = useState([]);
+    const [selCEPF, setSelCEPF] = useState([]);
+    const [selBasico, setSelBasico] = useState([]);
+    const [selCompleto, setSelCompleto] = useState([]);
+    const [selTotal, setSelTotal] = useState([]);
 
     const location = useLocation();
     const navigator = useNavigate();
@@ -315,14 +316,14 @@ const Cadernos = () => {
 
 
     const cidadeFiltrada = (cidade || []).filter(item => {
-        const matchUF = !filtroUF || (item.UF || '').toLowerCase().includes(filtroUF.toLowerCase());
-        const matchCaderno = !filtroCaderno || (item.nomeCaderno || '').toLowerCase().includes(filtroCaderno.toLowerCase());
-        const matchMosaico = !filtroMosaico || (item.descImagem ? 'SIM' : 'NÃO').toLowerCase().includes(filtroMosaico.toLowerCase());
-        const matchCEPI = !filtroCEPInicial || (item.cep_inicial || '').includes(filtroCEPInicial);
-        const matchCEPF = !filtroCEPFinal || (item.cep_final || '').includes(filtroCEPFinal);
-        const matchBasico = !filtroBasico || String(item.basico).includes(filtroBasico);
-        const matchCompleto = !filtroCompleto || String(item.completo).includes(filtroCompleto);
-        const matchTotal = !filtroTotal || String(item.total).includes(filtroTotal);
+        const matchUF = selUF.length === 0 || selUF.includes(item.UF || '');
+        const matchCaderno = selCaderno.length === 0 || selCaderno.includes(item.nomeCaderno || '');
+        const matchMosaico = selMosaico.length === 0 || selMosaico.includes(item.descImagem ? 'SIM' : 'NÃO');
+        const matchCEPI = selCEPI.length === 0 || selCEPI.includes(item.cep_inicial || '');
+        const matchCEPF = selCEPF.length === 0 || selCEPF.includes(item.cep_final || '');
+        const matchBasico = selBasico.length === 0 || selBasico.includes(String(item.basico));
+        const matchCompleto = selCompleto.length === 0 || selCompleto.includes(String(item.completo));
+        const matchTotal = selTotal.length === 0 || selTotal.includes(String(item.total));
         return matchUF && matchCaderno && matchMosaico && matchCEPI && matchCEPF && matchBasico && matchCompleto && matchTotal;
     });
 
@@ -385,14 +386,14 @@ const Cadernos = () => {
                                         <th>TOTAL</th>
                                     </tr>
                                     <tr>
-                                        <th><input type="text" className="form-control form-control-sm" placeholder="Filtrar..." value={filtroUF} onChange={e => setFiltroUF(e.target.value)} onClick={e => e.stopPropagation()} /></th>
-                                        <th><input type="text" className="form-control form-control-sm" placeholder="Filtrar..." value={filtroCaderno} onChange={e => setFiltroCaderno(e.target.value)} onClick={e => e.stopPropagation()} /></th>
-                                        <th><input type="text" className="form-control form-control-sm" placeholder="Filtrar..." value={filtroMosaico} onChange={e => setFiltroMosaico(e.target.value)} onClick={e => e.stopPropagation()} /></th>
-                                        <th><input type="text" className="form-control form-control-sm" placeholder="Filtrar..." value={filtroCEPInicial} onChange={e => setFiltroCEPInicial(e.target.value)} onClick={e => e.stopPropagation()} /></th>
-                                        <th><input type="text" className="form-control form-control-sm" placeholder="Filtrar..." value={filtroCEPFinal} onChange={e => setFiltroCEPFinal(e.target.value)} onClick={e => e.stopPropagation()} /></th>
-                                        <th><input type="text" className="form-control form-control-sm" placeholder="Filtrar..." value={filtroBasico} onChange={e => setFiltroBasico(e.target.value)} onClick={e => e.stopPropagation()} /></th>
-                                        <th><input type="text" className="form-control form-control-sm" placeholder="Filtrar..." value={filtroCompleto} onChange={e => setFiltroCompleto(e.target.value)} onClick={e => e.stopPropagation()} /></th>
-                                        <th><input type="text" className="form-control form-control-sm" placeholder="Filtrar..." value={filtroTotal} onChange={e => setFiltroTotal(e.target.value)} onClick={e => e.stopPropagation()} /></th>
+                                        <th><ColumnFilter values={cidade.map(i => i.UF)} selected={selUF} onChange={setSelUF} /></th>
+                                        <th><ColumnFilter values={cidade.map(i => i.nomeCaderno)} selected={selCaderno} onChange={setSelCaderno} /></th>
+                                        <th><ColumnFilter values={cidade.map(i => i.descImagem ? 'SIM' : 'NÃO')} selected={selMosaico} onChange={setSelMosaico} /></th>
+                                        <th><ColumnFilter values={cidade.map(i => i.cep_inicial)} selected={selCEPI} onChange={setSelCEPI} /></th>
+                                        <th><ColumnFilter values={cidade.map(i => i.cep_final)} selected={selCEPF} onChange={setSelCEPF} /></th>
+                                        <th><ColumnFilter values={cidade.map(i => String(i.basico))} selected={selBasico} onChange={setSelBasico} /></th>
+                                        <th><ColumnFilter values={cidade.map(i => String(i.completo))} selected={selCompleto} onChange={setSelCompleto} /></th>
+                                        <th><ColumnFilter values={cidade.map(i => String(i.total))} selected={selTotal} onChange={setSelTotal} /></th>
                                     </tr>
                                 </thead>
                                 <tbody>
