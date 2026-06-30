@@ -97,7 +97,7 @@ function Caderno(props) {
       .then(x => x.json())
       .then(res => {
         if (res.success) {
-          setPathImg(res.teste.rows);
+          setPathImg(res.capas || []);
           setMosaicoImg(res.mosaico);
           setQtdaPerfil(res.totalRegistros);
         }

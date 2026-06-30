@@ -485,13 +485,31 @@ module.exports = {
             }
 
             if (!cadernoData) {
-                return res.json({ success: true, teste: { count: 0, rows: [] }, mosaico: null, totalRegistros: 0 });
+                return res.json({ success: true, teste: { count: 0, rows: [] }, capas: [], mosaico: null, totalRegistros: 0 });
             }
 
             const nomeCadernoReal = cadernoData.nomeCaderno;
             const paginaAtual = req.query.page ? parseInt(req.query.page) : 1;
             const porPagina = 10;
             const offset = (paginaAtual - 1) * porPagina;
+
+            const tiposCapa = ['ADMINISTRAÇÃO REGIONAL / PREFEITURA', 'EMERGÊNCIA', 'UTILIDADE PÚBLICA', 'HOSPITAIS PÚBLICOS', 'CÂMARA DE VEREADORES - CÂMARA DISTRITAL', 'SECRETARIA DE TURISMO', 'INFORMAÇÕES', 'EVENTOS NA CIDADE'];
+
+            const capasResult = await Anuncio.findAll({
+                where: {
+                    [Op.and]: [
+                        { codUf: req.params.uf },
+                        { [Op.or]: [
+                            { codCaderno: nomeCadernoReal },
+                            { codCaderno: String(cadernoData.codCaderno) }
+                        ]},
+                        { activate: 1 },
+                        { codAtividade: { [Op.in]: tiposCapa } }
+                    ]
+                },
+                attributes: ['codAnuncio', 'codAtividade', 'descAnuncio', 'descEndereco', 'descImagem', 'codCaderno', 'codUf'],
+                order: [['codAtividade', 'ASC'], ['descAnuncio', 'ASC']]
+            });
 
             const anuncioTeste = await Anuncio.findAndCountAll({
                 where: {
@@ -513,6 +531,7 @@ module.exports = {
             res.json({
                 success: true,
                 teste: anuncioTeste,
+                capas: capasResult,
                 mosaico: cadernoData.descImagem,
                 totalRegistros: cadernoData.total
             });
