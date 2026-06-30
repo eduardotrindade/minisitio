@@ -210,7 +210,9 @@ const Users = () => {
             return;
         } */
 
-        fetch(`${masterPath.url}/admin/usuario/buscar/${campoPesquisa}?require=${searchOptioncheck}&uf=${estadoSelecionado}&caderno=${cadernoSelecionado}`)
+        fetch(`${masterPath.url}/admin/usuario/buscar/${campoPesquisa}?require=${searchOptioncheck}&uf=${estadoSelecionado}&caderno=${cadernoSelecionado}`, {
+            headers: { "authorization": 'Bearer ' + tokenAuth }
+        })
             .then((x) => {
                 if (x.status === 401) {
                     alert("Sessão expirada, faça login para continuar.");
