@@ -425,6 +425,77 @@ module.exports = (io, loginLimiter) => {
     router.post('/api/admin/anuncio/export', auth, EspacosController.export4excell);
     router.post('/api/admin/export/:modulo', auth, Admin.exportPadrao);
 
+    // Duplicações no banco de dados
+    router.get('/api/admin/duplicacoes', auth, async (req, res) => {
+        try {
+            const [usuariosEmail] = await database.query(`
+                SELECT descEmail as valor, COUNT(*) as total
+                FROM usuario WHERE descEmail IS NOT NULL AND descEmail != ''
+                GROUP BY descEmail HAVING total > 1 ORDER BY total DESC
+            `);
+            const [usuariosCPF] = await database.query(`
+                SELECT descCPFCNPJ as valor, COUNT(*) as total
+                FROM usuario WHERE descCPFCNPJ IS NOT NULL AND descCPFCNPJ != ''
+                GROUP BY descCPFCNPJ HAVING total > 1 ORDER BY total DESC
+            `);
+            const [usuariosTel] = await database.query(`
+                SELECT descTelefone as valor, COUNT(*) as total
+                FROM usuario WHERE descTelefone IS NOT NULL AND descTelefone != ''
+                GROUP BY descTelefone HAVING total > 1 ORDER BY total DESC
+            `);
+            const [anuncioEmailCom] = await database.query(`
+                SELECT descEmailComercial as valor, COUNT(*) as total
+                FROM anuncio WHERE descEmailComercial IS NOT NULL AND descEmailComercial != ''
+                GROUP BY descEmailComercial HAVING total > 1 ORDER BY total DESC
+            `);
+            const [anuncioEmailRet] = await database.query(`
+                SELECT descEmailRetorno as valor, COUNT(*) as total
+                FROM anuncio WHERE descEmailRetorno IS NOT NULL AND descEmailRetorno != ''
+                GROUP BY descEmailRetorno HAVING total > 1 ORDER BY total DESC
+            `);
+            const [anuncioCPF] = await database.query(`
+                SELECT descCPFCNPJ as valor, COUNT(*) as total
+                FROM anuncio WHERE descCPFCNPJ IS NOT NULL AND descCPFCNPJ != ''
+                GROUP BY descCPFCNPJ HAVING total > 1 ORDER BY total DESC
+            `);
+            const [anuncioTel] = await database.query(`
+                SELECT descTelefone as valor, COUNT(*) as total
+                FROM anuncio WHERE descTelefone IS NOT NULL AND descTelefone != ''
+                GROUP BY descTelefone HAVING total > 1 ORDER BY total DESC
+            `);
+            const [anuncioCel] = await database.query(`
+                SELECT descCelular as valor, COUNT(*) as total
+                FROM anuncio WHERE descCelular IS NOT NULL AND descCelular != ''
+                GROUP BY descCelular HAVING total > 1 ORDER BY total DESC
+            `);
+            const [anuncioEmailAut] = await database.query(`
+                SELECT descEmailAutorizante as valor, COUNT(*) as total
+                FROM anuncio WHERE descEmailAutorizante IS NOT NULL AND descEmailAutorizante != ''
+                GROUP BY descEmailAutorizante HAVING total > 1 ORDER BY total DESC
+            `);
+
+            res.json({
+                success: true,
+                usuario: {
+                    email: usuariosEmail,
+                    cpf_cnpj: usuariosCPF,
+                    telefone: usuariosTel
+                },
+                anuncio: {
+                    email_comercial: anuncioEmailCom,
+                    email_retorno: anuncioEmailRet,
+                    email_autorizante: anuncioEmailAut,
+                    cpf_cnpj: anuncioCPF,
+                    telefone: anuncioTel,
+                    celular: anuncioCel
+                }
+            });
+        } catch (err) {
+            console.error('Erro ao buscar duplicações:', err.message);
+            res.json({ success: false, message: err.message });
+        }
+    });
+
     // Wrapper para passar o io
     function importWithSocket(req, res, next) {
         req.io = io; // injeta o io no req para o controller usar
