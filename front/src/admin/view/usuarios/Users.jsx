@@ -462,26 +462,15 @@ const Users = () => {
                             <table className="table table-bordered table-striped table-hover w-full text-xs">
                                 <thead>
                                     <tr>
-                                        <th>NOME</th>
-                                        <th>E-MAIL</th>
-                                        <th>CPF/CNPJ</th>
+                                        <th>NOME <ColumnFilter values={(usuarios?.usuarios || []).map(i => i.descNome)} selected={selNome} onChange={setSelNome} /></th>
+                                        <th>E-MAIL <ColumnFilter values={(usuarios?.usuarios || []).map(i => i.descEmail)} selected={selEmail} onChange={setSelEmail} /></th>
+                                        <th>CPF/CNPJ <ColumnFilter values={(usuarios?.usuarios || []).map(i => i.descCPFCNPJ)} selected={selCPF} onChange={setSelCPF} /></th>
                                         <th>SENHA</th>
-                                        <th>TIPO</th>
-                                        <th>UF</th>
-                                        <th>CIDADE</th>
+                                        <th>TIPO <ColumnFilter values={(usuarios?.usuarios || []).map(i => tipoMap[i.codTipoUsuario])} selected={selTipo} onChange={setSelTipo} /></th>
+                                        <th>UF <ColumnFilter values={(usuarios?.usuarios || []).map(i => i.codUf)} selected={selUF} onChange={setSelUF} /></th>
+                                        <th>CIDADE <ColumnFilter values={(usuarios?.usuarios || []).map(i => i.codCidade)} selected={selCidade} onChange={setSelCidade} /></th>
                                         <th>Cadastrado em</th>
                                         <th style={{ width: "100px" }}>Status</th>
-                                    </tr>
-                                    <tr>
-                                        <th><ColumnFilter values={(usuarios?.usuarios || []).map(i => i.descNome)} selected={selNome} onChange={setSelNome} /></th>
-                                        <th><ColumnFilter values={(usuarios?.usuarios || []).map(i => i.descEmail)} selected={selEmail} onChange={setSelEmail} /></th>
-                                        <th><ColumnFilter values={(usuarios?.usuarios || []).map(i => i.descCPFCNPJ)} selected={selCPF} onChange={setSelCPF} /></th>
-                                        <th></th>
-                                        <th><ColumnFilter values={(usuarios?.usuarios || []).map(i => tipoMap[i.codTipoUsuario])} selected={selTipo} onChange={setSelTipo} /></th>
-                                        <th><ColumnFilter values={(usuarios?.usuarios || []).map(i => i.codUf)} selected={selUF} onChange={setSelUF} /></th>
-                                        <th><ColumnFilter values={(usuarios?.usuarios || []).map(i => i.codCidade)} selected={selCidade} onChange={setSelCidade} /></th>
-                                        <th></th>
-                                        <th></th>
                                     </tr>
                                 </thead>
                                 <tbody>

@@ -329,24 +329,14 @@ const GerenciarIds = () => {
                             <table className="table table-bordered table-striped table-hover">
                                 <thead>
                                     <tr>
-                                        <th style={{ "width": "200px" }}>Usuário</th>
-                                        <th style={{ "width": "100px" }}>Desconto</th>
-                                        <th style={{ "width": "150px" }}>Código</th>
-                                        <th style={{ "width": "250px" }}>Descrição</th>
-                                        <th style={{ "width": "200px" }}>Cadastrado em</th>
-                                        <th style={{ "width": "150px" }}>Qtde Espaços</th>
-                                        <th style={{ "width": "100px" }}>Saldo</th>
+                                        <th style={{ "width": "200px" }}>Usuário <ColumnFilter values={(ids?.IdsValue || []).map(i => i.nmUsuario)} selected={selUsuario} onChange={setSelUsuario} /></th>
+                                        <th style={{ "width": "100px" }}>Desconto <ColumnFilter values={(ids?.IdsValue || []).map(i => String(parseFloat(i.desconto).toFixed(2)).replace('.', ','))} selected={selDesconto} onChange={setSelDesconto} /></th>
+                                        <th style={{ "width": "150px" }}>Código <ColumnFilter values={(ids?.IdsValue || []).map(i => i.hash)} selected={selCodigo} onChange={setSelCodigo} /></th>
+                                        <th style={{ "width": "250px" }}>Descrição <ColumnFilter values={(ids?.IdsValue || []).map(i => i.descricao)} selected={selDescricao} onChange={setSelDescricao} /></th>
+                                        <th style={{ "width": "200px" }}>Cadastrado em <ColumnFilter values={(ids?.IdsValue || []).map(i => formatData(i.dtCadastro))} selected={selData} onChange={setSelData} /></th>
+                                        <th style={{ "width": "150px" }}>Qtde Espaços <ColumnFilter values={(ids?.IdsValue || []).map(i => String(i.total_registros))} selected={selQtde} onChange={setSelQtde} /></th>
+                                        <th style={{ "width": "100px" }}>Saldo <ColumnFilter values={(ids?.IdsValue || []).map(i => String(i.saldo))} selected={selSaldo} onChange={setSelSaldo} /></th>
                                         <th style={{ "width": "100px" }}>Status</th>
-                                    </tr>
-                                    <tr>
-                                        <th><ColumnFilter values={(ids?.IdsValue || []).map(i => i.nmUsuario)} selected={selUsuario} onChange={setSelUsuario} /></th>
-                                        <th><ColumnFilter values={(ids?.IdsValue || []).map(i => String(parseFloat(i.desconto).toFixed(2)).replace('.', ','))} selected={selDesconto} onChange={setSelDesconto} /></th>
-                                        <th><ColumnFilter values={(ids?.IdsValue || []).map(i => i.hash)} selected={selCodigo} onChange={setSelCodigo} /></th>
-                                        <th><ColumnFilter values={(ids?.IdsValue || []).map(i => i.descricao)} selected={selDescricao} onChange={setSelDescricao} /></th>
-                                        <th><ColumnFilter values={(ids?.IdsValue || []).map(i => formatData(i.dtCadastro))} selected={selData} onChange={setSelData} /></th>
-                                        <th><ColumnFilter values={(ids?.IdsValue || []).map(i => String(i.total_registros))} selected={selQtde} onChange={setSelQtde} /></th>
-                                        <th><ColumnFilter values={(ids?.IdsValue || []).map(i => String(i.saldo))} selected={selSaldo} onChange={setSelSaldo} /></th>
-                                        <th></th>
                                     </tr>
                                 </thead>
                                 <tbody>

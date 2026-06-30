@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 
-const ColumnFilter = ({ values, selected, onChange, label }) => {
+const ColumnFilter = ({ values, selected, onChange }) => {
     const [open, setOpen] = useState(false);
     const [search, setSearch] = useState('');
     const ref = useRef(null);
@@ -37,20 +37,21 @@ const ColumnFilter = ({ values, selected, onChange, label }) => {
     const hasFilter = selected.length > 0 && selected.length < uniqueValues.length;
 
     return (
-        <div ref={ref} style={{ position: 'relative', display: 'inline-block' }}>
+        <span ref={ref} style={{ position: 'relative', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
             <button
                 onClick={(e) => { e.stopPropagation(); setOpen(!open); }}
                 style={{
                     background: hasFilter ? '#0d6efd' : 'transparent',
-                    color: hasFilter ? '#fff' : '#666',
-                    border: hasFilter ? '1px solid #0d6efd' : '1px solid #ccc',
-                    borderRadius: '3px',
-                    padding: '1px 6px',
+                    color: hasFilter ? '#fff' : '#999',
+                    border: 'none',
+                    padding: '0',
                     fontSize: '10px',
                     cursor: 'pointer',
-                    lineHeight: '14px',
+                    lineHeight: '1',
+                    display: 'inline-flex',
+                    alignItems: 'center',
                 }}
-                title={label || 'Filtrar'}
+                title="Filtrar"
             >
                 <i className="fa fa-filter"></i>
             </button>
@@ -131,7 +132,7 @@ const ColumnFilter = ({ values, selected, onChange, label }) => {
                     </div>
                 </div>
             )}
-        </div>
+        </span>
     );
 };
 

@@ -853,14 +853,14 @@ Para 100000 linhas: 312500ms
                             <table className="table table-bordered table-striped table-hover" style={{ tableLayout: 'fixed', width: '100%' }}>
                                 <thead>
                                     <tr>
-                                        <th style={{ width: '111px' }}>COD</th>
+                                        <th style={{ width: '111px' }}>COD <ColumnFilter values={(anuncios?.message?.anuncios || []).map(i => String(i.codAnuncio))} selected={selCOD} onChange={setSelCOD} /></th>
                                         <th>COD_OR</th>
                                         <th style={{ width: '58px' }}>DUPLI</th>
-                                        <th style={{ width: '120px' }}>CNPJ</th>
-                                        <th style={{ width: '200px' }}>NOME</th>
-                                        <th>TIPO</th>
-                                        <th>CADERNO</th>
-                                        <th>UF</th>
+                                        <th style={{ width: '120px' }}>CNPJ <ColumnFilter values={(anuncios?.message?.anuncios || []).map(i => i.descCPFCNPJ)} selected={selCNPJ} onChange={setSelCNPJ} /></th>
+                                        <th style={{ width: '200px' }}>NOME <ColumnFilter values={(anuncios?.message?.anuncios || []).map(i => i.descAnuncio)} selected={selNomeEsp} onChange={setSelNomeEsp} /></th>
+                                        <th>TIPO <ColumnFilter values={(anuncios?.message?.anuncios || []).map(i => i.codTipoAnuncio)} selected={selTipoEsp} onChange={setSelTipoEsp} /></th>
+                                        <th>CADERNO <ColumnFilter values={(anuncios?.message?.anuncios || []).map(i => String(i.codCaderno))} selected={selCadernoEsp} onChange={setSelCadernoEsp} /></th>
+                                        <th>UF <ColumnFilter values={(anuncios?.message?.anuncios || []).map(i => String(i.codUf))} selected={selUFEsp} onChange={setSelUFEsp} /></th>
                                         <th style={{ width: '111px' }}>STATUS</th>
                                         <th>PAG.</th>
                                         <th>DATA_PAG</th>
@@ -874,23 +874,10 @@ Para 100000 linhas: 312500ms
                                         <th>USUARIO/DECISOR</th>
                                         <th>LOGIN</th>
                                         <th style={{ width: '65px' }}>SENHA</th>
-                                        <th>EMAIL</th>
-                                        <th>CONTATO</th>
+                                        <th>EMAIL <ColumnFilter values={(anuncios?.message?.anuncios || []).map(i => i.descEmailComercial)} selected={selEmailEsp} onChange={setSelEmailEsp} /></th>
+                                        <th>CONTATO <ColumnFilter values={(anuncios?.message?.anuncios || []).map(i => i.descTelefone)} selected={selContatoEsp} onChange={setSelContatoEsp} /></th>
                                         <th>ATIVIDADE PRINCIPAL</th>
                                         <th>LINK_PERFIL</th>
-                                    </tr>
-                                    <tr>
-                                        <th><ColumnFilter values={(anuncios?.message?.anuncios || []).map(i => String(i.codAnuncio))} selected={selCOD} onChange={setSelCOD} /></th>
-                                        <th></th><th></th>
-                                        <th><ColumnFilter values={(anuncios?.message?.anuncios || []).map(i => i.descCPFCNPJ)} selected={selCNPJ} onChange={setSelCNPJ} /></th>
-                                        <th><ColumnFilter values={(anuncios?.message?.anuncios || []).map(i => i.descAnuncio)} selected={selNomeEsp} onChange={setSelNomeEsp} /></th>
-                                        <th><ColumnFilter values={(anuncios?.message?.anuncios || []).map(i => i.codTipoAnuncio)} selected={selTipoEsp} onChange={setSelTipoEsp} /></th>
-                                        <th><ColumnFilter values={(anuncios?.message?.anuncios || []).map(i => String(i.codCaderno))} selected={selCadernoEsp} onChange={setSelCadernoEsp} /></th>
-                                        <th><ColumnFilter values={(anuncios?.message?.anuncios || []).map(i => String(i.codUf))} selected={selUFEsp} onChange={setSelUFEsp} /></th>
-                                        <th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th>
-                                        <th><ColumnFilter values={(anuncios?.message?.anuncios || []).map(i => i.descEmailComercial)} selected={selEmailEsp} onChange={setSelEmailEsp} /></th>
-                                        <th><ColumnFilter values={(anuncios?.message?.anuncios || []).map(i => i.descTelefone)} selected={selContatoEsp} onChange={setSelContatoEsp} /></th>
-                                        <th></th><th></th>
                                     </tr>
                                 </thead>
                                 <tbody>

@@ -220,14 +220,9 @@ const Atividades = () => {
                             <table className="table table-bordered table-striped table-hover">
                                 <thead>
                                     <tr>
-                                        <th>Ativadade-CNAE</th>
-                                        <th>Atividade</th>
-                                        <th>Tipo</th>
-                                    </tr>
-                                    <tr>
-                                        <th><ColumnFilter values={atividades.map(i => i.atividade)} selected={selCNAE} onChange={setSelCNAE} /></th>
-                                        <th><ColumnFilter values={atividades.map(i => i.nomeAmigavel)} selected={selNome} onChange={setSelNome} /></th>
-                                        <th><ColumnFilter values={atividades.map(i => i.corTitulo)} selected={selTipo} onChange={setSelTipo} /></th>
+                                        <th>Ativadade-CNAE <ColumnFilter values={atividades.map(i => i.atividade)} selected={selCNAE} onChange={setSelCNAE} /></th>
+                                        <th>Atividade <ColumnFilter values={atividades.map(i => i.nomeAmigavel)} selected={selNome} onChange={setSelNome} /></th>
+                                        <th>Tipo <ColumnFilter values={atividades.map(i => i.corTitulo)} selected={selTipo} onChange={setSelTipo} /></th>
                                     </tr>
                                 </thead>
                                 <tbody>

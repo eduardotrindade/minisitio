@@ -376,24 +376,14 @@ const Cadernos = () => {
                             <table className="table table-bordered table-striped table-hover">
                                 <thead>
                                     <tr>
-                                        <th>UF</th>
-                                        <th>CADERNO</th>
-                                        <th>MOSAICO</th>
-                                        <th>CEP_INICIAL</th>
-                                        <th>CEP_FINAL</th>
-                                        <th>BÁSICOS</th>
-                                        <th>COMPLETOS</th>
-                                        <th>TOTAL</th>
-                                    </tr>
-                                    <tr>
-                                        <th><ColumnFilter values={cidade.map(i => i.UF)} selected={selUF} onChange={setSelUF} /></th>
-                                        <th><ColumnFilter values={cidade.map(i => i.nomeCaderno)} selected={selCaderno} onChange={setSelCaderno} /></th>
-                                        <th><ColumnFilter values={cidade.map(i => i.descImagem ? 'SIM' : 'NÃO')} selected={selMosaico} onChange={setSelMosaico} /></th>
-                                        <th><ColumnFilter values={cidade.map(i => i.cep_inicial)} selected={selCEPI} onChange={setSelCEPI} /></th>
-                                        <th><ColumnFilter values={cidade.map(i => i.cep_final)} selected={selCEPF} onChange={setSelCEPF} /></th>
-                                        <th><ColumnFilter values={cidade.map(i => String(i.basico))} selected={selBasico} onChange={setSelBasico} /></th>
-                                        <th><ColumnFilter values={cidade.map(i => String(i.completo))} selected={selCompleto} onChange={setSelCompleto} /></th>
-                                        <th><ColumnFilter values={cidade.map(i => String(i.total))} selected={selTotal} onChange={setSelTotal} /></th>
+                                        <th>UF <ColumnFilter values={cidade.map(i => i.UF)} selected={selUF} onChange={setSelUF} /></th>
+                                        <th>CADERNO <ColumnFilter values={cidade.map(i => i.nomeCaderno)} selected={selCaderno} onChange={setSelCaderno} /></th>
+                                        <th>MOSAICO <ColumnFilter values={cidade.map(i => i.descImagem ? 'SIM' : 'NÃO')} selected={selMosaico} onChange={setSelMosaico} /></th>
+                                        <th>CEP_INICIAL <ColumnFilter values={cidade.map(i => i.cep_inicial)} selected={selCEPI} onChange={setSelCEPI} /></th>
+                                        <th>CEP_FINAL <ColumnFilter values={cidade.map(i => i.cep_final)} selected={selCEPF} onChange={setSelCEPF} /></th>
+                                        <th>BÁSICOS <ColumnFilter values={cidade.map(i => String(i.basico))} selected={selBasico} onChange={setSelBasico} /></th>
+                                        <th>COMPLETOS <ColumnFilter values={cidade.map(i => String(i.completo))} selected={selCompleto} onChange={setSelCompleto} /></th>
+                                        <th>TOTAL <ColumnFilter values={cidade.map(i => String(i.total))} selected={selTotal} onChange={setSelTotal} /></th>
                                     </tr>
                                 </thead>
                                 <tbody>
