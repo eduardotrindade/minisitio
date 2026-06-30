@@ -121,10 +121,10 @@ const Duplicidades = () => {
             <section>
                 {showSpinner && <Spinner />}
 
-                <h1 className="px-4">Duplicidades</h1>
-                <div className="container-fluid py-4 px-4">
-                    <div className="row mb-3">
-                        <div className="col-md-3">
+                <h1 className="px-3 px-md-4">Duplicidades</h1>
+                <div className="container-fluid py-3 px-3 px-md-4">
+                    <div className="row g-2 mb-3">
+                        <div className="col-12 col-sm-6 col-md-3">
                             <label className="form-label fw-bold">Tabela</label>
                             <select
                                 className="form-select"
@@ -136,7 +136,7 @@ const Duplicidades = () => {
                                 <option value="anuncio">Anúncios</option>
                             </select>
                         </div>
-                        <div className="col-md-3">
+                        <div className="col-12 col-sm-6 col-md-3">
                             <label className="form-label fw-bold">Campo</label>
                             <select
                                 className="form-select"
@@ -148,7 +148,7 @@ const Duplicidades = () => {
                                 ))}
                             </select>
                         </div>
-                        <div className="col-md-4">
+                        <div className="col-12 col-md-4">
                             <label className="form-label fw-bold">Buscar valor</label>
                             <input
                                 type="text"
@@ -158,7 +158,7 @@ const Duplicidades = () => {
                                 onChange={e => setBusca(e.target.value)}
                             />
                         </div>
-                        <div className="col-md-2 d-flex align-items-end">
+                        <div className="col-12 col-md-2 d-flex align-items-end">
                             <button className="btn btn-success w-100" onClick={exportCSV}>
                                 <i className="fa fa-download me-1"></i> Exportar CSV
                             </button>
@@ -174,8 +174,8 @@ const Duplicidades = () => {
                 </div>
 
                 <article>
-                    <div className="container-fluid px-4">
-                        <div className="row">
+                    <div className="container-fluid px-3 px-md-4">
+                        <div className="table-responsive">
                             <table className="table table-bordered table-striped table-hover">
                                 <thead>
                                     <tr>
@@ -194,7 +194,7 @@ const Duplicidades = () => {
                                                 </span>
                                             </td>
                                             <td>{labelsCampos[item.campo] || item.campo}</td>
-                                            <td>{item.valor}</td>
+                                            <td style={{ maxWidth: '300px', wordBreak: 'break-all' }}>{item.valor}</td>
                                             <td className="text-center">
                                                 <span className={`badge ${item.total >= 5 ? 'bg-danger' : item.total >= 3 ? 'bg-warning text-dark' : 'bg-secondary'}`}>
                                                     {item.total}
