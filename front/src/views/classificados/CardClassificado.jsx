@@ -102,12 +102,6 @@ useEffect(() => {
                     </div>
 
                 </li>
-            ) : props.fallbackImg ? (
-                <li className="cartao mb-4">
-                    <div className="conteudo">
-                        <img src={props.fallbackImg} alt={props.title} />
-                    </div>
-                </li>
             ) : (
                 <li className="cartao d-flex justify-content-center align-items-center">
                     <span>NÃO INFORMADO</span>
